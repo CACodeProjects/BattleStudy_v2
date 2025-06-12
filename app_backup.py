@@ -1,40 +1,37 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+﻿from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from game.user_loader import load_user, save_user
 from flask_migrate import Migrate
 from models import db, User, Question, QuestionProgress
-from game.user_loader import load_user, save_user
 from dotenv import load_dotenv
-from pathlib import Path
 import json
+from pathlib import Path
 import random
 import socket
 import os
 
-load_dotenv()  # Load .env variables
+load_dotenv()  # 👈 this loads your .env file automatically
 
 app = Flask(__name__)
 app.secret_key = "secret"
 app.config['JSON_AS_ASCII'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 migrate = Migrate(app, db)
 
+# Optional: Example user model for PostgreSQL
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    xp = db.Column(db.Integer, default=0)
+    streak = db.Column(db.Integer, default=0)
+
 QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v2.json")
 with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
     all_questions = json.load(f)
-
-# ✅ API endpoint for questions
-@app.route("/api/questions", methods=["GET"])
-def get_questions():
-    limit = int(request.args.get("limit", 10))
-    chapter = request.args.get("chapter")
-    query = Question.query
-    if chapter:
-        query = query.filter_by(chapter=chapter)
-    questions = query.limit(limit).all()
-    return jsonify([q.to_dict() for q in questions])
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -47,6 +44,7 @@ def index():
 @app.route("/choose-world", methods=["GET", "POST"])
 def choose_world():
     chapters = sorted({q.get("chapter", "Mixed") for q in all_questions})
+
     if request.method == "POST":
         session["world"] = request.form["world"]
         session["player_hp"] = 100
@@ -54,6 +52,7 @@ def choose_world():
         session["streak"] = 0
         session.pop("last_result", None)
         return redirect(url_for("battle"))
+
     return render_template("choose_world.html", chapters=chapters)
 
 @app.route("/battle", methods=["GET", "POST"])
@@ -118,6 +117,7 @@ def battle():
             session["wizard_hp"] = 0
             session["player_hp"] = 0
             save_user(profile)
+
         elif session["player_hp"] <= 0:
             session["last_result"] += "<br>You were defeated by the wizard."
 
