@@ -45,8 +45,10 @@ class QuestionProgress(db.Model):
     __tablename__ = "question_progress"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    question_id = db.Column(db.String, nullable=False)  # <-- changed from Integer
+    question_id = db.Column(db.String, nullable=False)  # changed from Integer + removed FK
     cooldown = db.Column(db.Integer, default=0)
     mistakes = db.Column(db.Integer, default=0)
     difficulty_level = db.Column(db.Integer, default=1)
+
+
 
