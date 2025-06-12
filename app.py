@@ -91,10 +91,12 @@ def battle():
 
         progress = progresses.get(qid)
         if not progress:
-            progress = QuestionProgress(user_id=user.id, question_id=qid)
+            progress = QuestionProgress(user_id=user.id, question_id=qid, difficulty_level=1)
             db.session.add(progress)
+            db.session.commit()
+            progresses[qid] = progress  # update dict to reflect new progress
 
-        difficulty = progress.difficulty_level
+        difficulty = progress.difficulty_level or 1
         is_correct = user_answer == correct_letter
 
         damage_config = {
@@ -154,7 +156,7 @@ def battle():
     question = random.choice(usable_questions)
     qid = str(question["id"])
     progress = progresses.get(qid, QuestionProgress())
-    difficulty = progress.difficulty_level
+    difficulty = progress.difficulty_level or 1
     mistakes = progress.mistakes
 
     return render_template("battle.html",
