@@ -86,15 +86,16 @@ def battle():
         user_answer = request.form["answer"]
         world = request.form["world"]
         question = next((q for q in all_questions if str(q["id"]) == qid), {})
-        correct_answer = question.get("correct_answer", "")[0].upper() if question.get("correct_answer") else ""
+        correct_answer = question.get("correct_answer", "")
+        correct_letter = correct_answer[0].upper() if correct_answer else ""
 
-        progress = progresses.get(int(qid))
+        progress = progresses.get(qid)
         if not progress:
-            progress = QuestionProgress(user_id=user.id, question_id=int(qid))
+            progress = QuestionProgress(user_id=user.id, question_id=qid)
             db.session.add(progress)
 
         difficulty = progress.difficulty_level
-        is_correct = user_answer == correct_answer
+        is_correct = user_answer == correct_letter
 
         damage_config = {
             "player_damage": {1: 10, 2: 15, 3: 25},
@@ -130,12 +131,12 @@ def battle():
         elif session["player_hp"] <= 0:
             session["last_result"] += "<br>You were defeated by the wizard."
 
-    question_ids_on_cooldown = [p.question_id for p in progresses.values() if p.cooldown > 0]
+    question_ids_on_cooldown = [str(p.question_id) for p in progresses.values() if p.cooldown > 0]
 
     usable_questions = [
         q for q in all_questions
         if (world == "ALL" or q.get("chapter") == world)
-        and int(q["id"]) not in question_ids_on_cooldown
+        and str(q["id"]) not in question_ids_on_cooldown
     ]
 
     if not usable_questions:
@@ -151,8 +152,8 @@ def battle():
         )
 
     question = random.choice(usable_questions)
-    qid = question["id"]
-    progress = progresses.get(int(qid), QuestionProgress())
+    qid = str(question["id"])
+    progress = progresses.get(qid, QuestionProgress())
     difficulty = progress.difficulty_level
     mistakes = progress.mistakes
 
