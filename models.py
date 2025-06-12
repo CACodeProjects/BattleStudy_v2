@@ -9,6 +9,8 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=True)
     has_logged_in_before = db.Column(db.Boolean, default=False)
+    question_progress = db.relationship("QuestionProgress", backref="user", lazy=True)
+
 class Question(db.Model):
     __tablename__ = "questions"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
