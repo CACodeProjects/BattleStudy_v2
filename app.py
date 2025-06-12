@@ -4,7 +4,6 @@ from flask_migrate import Migrate
 from models import db, User, Question, QuestionProgress
 from dotenv import load_dotenv
 from pathlib import Path
-import json
 import random
 import socket
 import os
@@ -19,10 +18,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 migrate = Migrate(app, db)
-
-QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v2.json")
-with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
-    all_questions = json.load(f)
 
 @app.route("/api/questions", methods=["GET"])
 def get_questions():
@@ -54,7 +49,7 @@ def index():
 
 @app.route("/choose-world", methods=["GET", "POST"])
 def choose_world():
-    chapters = sorted({q.get("chapter", "Mixed") for q in all_questions})
+    chapters = sorted({q.chapter for q in Question.query.all()})
     if request.method == "POST":
         session["world"] = request.form["world"]
         session["player_hp"] = 100
@@ -88,8 +83,8 @@ def battle():
         qid = int(request.form["qid"])
         user_answer = request.form["answer"]
         world = request.form["world"]
-        question = next((q for q in all_questions if q["id"] == qid), {})
-        correct_answer = question.get("correct_answer", "")[0].upper()
+        question = Question.query.get(qid)
+        correct_answer = question.correct_answer[0].upper() if question.correct_answer else ""
 
         progress = progresses.get(qid)
         if not progress:
@@ -133,11 +128,12 @@ def battle():
         elif session["player_hp"] <= 0:
             session["last_result"] += "<br>You were defeated by the wizard."
 
-    usable_questions = [
-        q for q in all_questions
-        if (world == "ALL" or q.get("chapter") == world)
-        and progresses.get(q["id"], QuestionProgress()).cooldown == 0
-    ]
+    question_ids_on_cooldown = [p.question_id for p in progresses.values() if p.cooldown > 0]
+
+    usable_questions = Question.query.filter(
+        (Question.chapter == world) if world != "ALL" else True,
+        ~Question.id.in_(question_ids_on_cooldown)
+    ).all()
 
     if not usable_questions:
         return render_template(
@@ -152,7 +148,7 @@ def battle():
         )
 
     question = random.choice(usable_questions)
-    qid = question["id"]
+    qid = question.id
     progress = progresses.get(qid, QuestionProgress())
     difficulty = progress.difficulty_level
     mistakes = progress.mistakes
