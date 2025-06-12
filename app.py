@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from models import db, User, Question, QuestionProgress
-from game.user_loader import load_user, save_user
 from dotenv import load_dotenv
 from pathlib import Path
 import json
@@ -10,7 +9,7 @@ import random
 import socket
 import os
 
-load_dotenv()  # Load .env variables
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -25,7 +24,6 @@ QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v2.json")
 with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
     all_questions = json.load(f)
 
-# ✅ API endpoint for questions
 @app.route("/api/questions", methods=["GET"])
 def get_questions():
     limit = int(request.args.get("limit", 10))
@@ -41,6 +39,16 @@ def index():
     if request.method == "POST":
         username = request.form["username"].strip().lower()
         session["username"] = username
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            user = User(username=username, email=f"{username}@example.com")
+            db.session.add(user)
+            db.session.commit()
+            flash(f"Welcome, {username}!")
+        else:
+            flash(f"Welcome back, {username}!")
+
         return redirect(url_for("choose_world"))
     return render_template("index.html")
 
@@ -59,8 +67,8 @@ def choose_world():
 @app.route("/battle", methods=["GET", "POST"])
 def battle():
     username = session.get("username")
+    user = User.query.filter_by(username=username).first()
     world = session.get("world", "ALL")
-    profile = load_user(username)
 
     if "player_hp" not in session:
         session["player_hp"] = 100
@@ -69,22 +77,26 @@ def battle():
     if "streak" not in session:
         session["streak"] = 0
 
-    for qid in profile["question_progress"]:
-        cooldown = profile["question_progress"][qid].get("cooldown", 0)
-        if cooldown > 0:
-            profile["question_progress"][qid]["cooldown"] = cooldown - 1
-    save_user(profile)
+    progresses = {p.question_id: p for p in user.question_progress}
+
+    for p in progresses.values():
+        if p.cooldown > 0:
+            p.cooldown -= 1
+    db.session.commit()
 
     if request.method == "POST":
-        qid = request.form["qid"]
+        qid = int(request.form["qid"])
         user_answer = request.form["answer"]
         world = request.form["world"]
         question = next((q for q in all_questions if q["id"] == qid), {})
         correct_answer = question.get("correct_answer", "")[0].upper()
 
-        progress = profile["question_progress"].get(qid, {})
-        difficulty = progress.get("difficulty_level", 1)
+        progress = progresses.get(qid)
+        if not progress:
+            progress = QuestionProgress(user_id=user.id, question_id=qid)
+            db.session.add(progress)
 
+        difficulty = progress.difficulty_level
         is_correct = user_answer == correct_answer
 
         damage_config = {
@@ -96,42 +108,43 @@ def battle():
 
         if is_correct:
             session["wizard_hp"] -= dmg_to_wizard
-            profile["xp"] += 10
+            user.xp += 10
             session["streak"] += 1
             result = f"Correct! You hit the wizard for {dmg_to_wizard} damage."
+            progress.cooldown = 3
+            progress.mistakes = 0
         else:
             session["player_hp"] -= dmg_to_player
             session["streak"] = 0
-            result = f"Wrong! The wizard hit you for {dmg_to_player} damage.<br>Correct answer: {question.get('correct_answer')}"
+            result = f"Wrong! The wizard hit you for {dmg_to_player} damage.<br>Correct answer: {correct_answer}"
+            progress.cooldown = 1
+            progress.mistakes += 1
+            progress.difficulty_level = min(difficulty + 1, 3)
 
-        profile["question_progress"][qid] = {
-            "cooldown": 3 if is_correct else 1,
-            "mistakes": 0 if is_correct else 1,
-            "difficulty_level": difficulty if is_correct else min(difficulty + 1, 3)
-        }
-        save_user(profile)
+        db.session.commit()
         session["last_result"] = result
 
         if session["wizard_hp"] <= 0:
             session["last_result"] += "<br>You defeated the wizard! +50 XP"
-            profile["xp"] += 50
+            user.xp += 50
             session["wizard_hp"] = 0
             session["player_hp"] = 0
-            save_user(profile)
+            db.session.commit()
         elif session["player_hp"] <= 0:
             session["last_result"] += "<br>You were defeated by the wizard."
 
     usable_questions = [
         q for q in all_questions
         if (world == "ALL" or q.get("chapter") == world)
-        and profile["question_progress"].get(q["id"], {}).get("cooldown", 0) == 0
+        and progresses.get(q["id"], QuestionProgress()).cooldown == 0
     ]
+
     if not usable_questions:
         return render_template(
             "battle.html",
             username=username,
             world=world,
-            profile=profile,
+            profile=user,
             difficulty=0,
             mistakes=0,
             question=None,
@@ -140,15 +153,15 @@ def battle():
 
     question = random.choice(usable_questions)
     qid = question["id"]
-    progress = profile["question_progress"].get(qid, {})
-    difficulty = progress.get("difficulty_level", 1)
-    mistakes = progress.get("mistakes", 0)
+    progress = progresses.get(qid, QuestionProgress())
+    difficulty = progress.difficulty_level
+    mistakes = progress.mistakes
 
     return render_template("battle.html",
                            username=username,
                            world=world,
                            question=question,
-                           profile=profile,
+                           profile=user,
                            difficulty=difficulty,
                            mistakes=mistakes)
 
