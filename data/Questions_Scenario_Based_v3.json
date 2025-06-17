@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "id": "1.1.1-Security-Controls_10",
     "text": "Security Controls Overview",
@@ -9815,14 +9815,14 @@
   {
     "id": "3.3.1-Data-Types-and-Classifications_60",
     "text": "Classifying Sensitive Data",
-    "question": "You've discovered that your system is vulnerable to CVE-2023-29336. What can be a possible consequence if this vulnerability is exploited?",
+    "question": "What is the primary security risk if CVE-2023-29336 is successfully exploited?",
     "choices": [
-      "A. Your system will refuse to boot",
-      "B. An attacker can post a Facebook status on your account",
-      "C. Your system will lose all data",
-      "D. Your system will start running much slower than usual"
+      "A. System files will be deleted remotely",
+      "B. An attacker can gain SYSTEM-level privileges",
+      "C. The system BIOS will be overwritten",
+      "D. Data will be exfiltrated through DNS tunneling"
     ],
-    "correct_answer": "B. An attacker can post a Facebook status on your account",
+    "correct_answer": "B. An attacker can gain SYSTEM-level privileges",
     "tags": [
       "consequence",
       "exploitation",
