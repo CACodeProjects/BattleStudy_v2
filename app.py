@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
+﻿from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from models import db, User, QuestionProgress
@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
-QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v2.json")
+QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v3.json")
 with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
     all_questions = json.load(f)
 
