@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
-QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v3.json")
+QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v4.json")
 with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
     all_questions = json.load(f)
 

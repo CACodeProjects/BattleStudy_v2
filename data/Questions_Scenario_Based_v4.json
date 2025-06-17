@@ -437,11 +437,11 @@
     "question": "You are the security manager of a corporate building. Which of the following measures would be considered a deterrent control?",
     "choices": [
       "A. Installing a fingerprint scanner at the main entrance.",
-      "B. Placing a sign that says, \u201cAuthorized Personnel Only\u201d at the entrance of the server room.",
+      "B. Placing a sign that says, “Authorized Personnel Only” at the entrance of the server room.",
       "C. Implementing a firewall to block unauthorized network access.",
       "D. Setting up surveillance cameras that record all activity in the building."
     ],
-    "correct_answer": "B. Placing a sign that says, \u201cAuthorized Personnel Only\u201d at the entrance of the server room.",
+    "correct_answer": "B. Placing a sign that says, “Authorized Personnel Only” at the entrance of the server room.",
     "tags": [
       "access_control",
       "deterrent control",
@@ -659,7 +659,6 @@
     "choices": [
       "A. Ethernet",
       "B. Bluetooth.",
-      "B. Bluetooth",
       "C. Satellite",
       "D. Fiber Optics"
     ],
@@ -1323,7 +1322,7 @@
   {
     "id": "1.2.5-Zero-Trust_26",
     "text": "Controlling Trust",
-    "question": "Alice sends Bob a digitally signed message. Bob has a hashing algorithm and Alice\u2019s public key on his laptop. Which of the following is a valid step for Bob to verify the digital signature?",
+    "question": "Alice sends Bob a digitally signed message. Bob has a hashing algorithm and Alice’s public key on his laptop. Which of the following is a valid step for Bob to verify the digital signature?",
     "choices": [
       "A. Bob should use his own private key to decrypt the digital signature.",
       "B. Bob should use Alice's private key to decrypt the digital signature.",
@@ -2397,7 +2396,6 @@
       "A. HIPAA",
       "B. Children's Online Privacy Protection Act (COPPA)",
       "C. General Data Protection Regulation (GDPR).",
-      "C. General Data Protection Regulation (GDPR)",
       "D. Privacy Act of 1974"
     ],
     "correct_answer": "C. General Data Protection Regulation (GDPR)",
@@ -2429,7 +2427,7 @@
   {
     "id": "1.4.2-Encrypting-Data_48",
     "text": "Key Lengths",
-    "question": "A cybersecurity expert is tasked with setting up a system that can divert a potential attacker\u2019s attention from the actual sensitive data. Which of the following methods would be the most suitable for this purpose?",
+    "question": "A cybersecurity expert is tasked with setting up a system that can divert a potential attacker’s attention from the actual sensitive data. Which of the following methods would be the most suitable for this purpose?",
     "choices": [
       "A. Implementing a firewall",
       "B. Setting up a VPN",
@@ -3707,14 +3705,14 @@
   {
     "id": "2.1.1-Threat-Actors_16",
     "text": "Threat Actor Attributes",
-    "question": "Bob wants to securely send a message to Alice. He has Alice\u2019s public key. What should Bob do to ensure that only Alice can read the message?",
+    "question": "Bob wants to securely send a message to Alice. He has Alice’s public key. What should Bob do to ensure that only Alice can read the message?",
     "choices": [
       "A. Bob should decrypt the message with Alice's public key.",
-      "B. Bob should combine Alice\u2019s public key with the plaintext to create ciphertext.",
+      "B. Bob should combine Alice’s public key with the plaintext to create ciphertext.",
       "C. Bob should encrypt the message with Alice's private key.",
       "D. Bob should send the message in plaintext as Alice's public key will automatically encrypt it."
     ],
-    "correct_answer": "B. Bob should combine Alice\u2019s public key with the plaintext to create ciphertext.",
+    "correct_answer": "B. Bob should combine Alice’s public key with the plaintext to create ciphertext.",
     "tags": [
       "encryption",
       "public key cryptography"
@@ -3870,8 +3868,7 @@
       "A. Leave the hard drive as is for the new hire",
       "B. Delete the employee's user account",
       "C. Run antivirus software on the hard drive",
-      "D. Perform media sanitization on the hard drive.",
-      "D. Perform media sanitization on the hard drive"
+      "D. Perform media sanitization on the hard drive."
     ],
     "correct_answer": "D. Perform media sanitization on the hard drive",
     "tags": [
@@ -4233,12 +4230,12 @@
     "text": "Supply Chain Vectors",
     "question": "Bob and Alice are trying to set up a secure communication channel. Bob has Alice's public key and his own private key. What should he do to create the symmetric key for the communication?",
     "choices": [
-      "A. Bob should combine his public key with Alice\u2019s public key.",
+      "A. Bob should combine his public key with Alice’s public key.",
       "B. Bob should combine his private key with his own public key.",
-      "C. Bob should combine his private key with Alice\u2019s public key.",
-      "D. Bob should combine Alice\u2019s public key with Alice\u2019s private key."
+      "C. Bob should combine his private key with Alice’s public key.",
+      "D. Bob should combine Alice’s public key with Alice’s private key."
     ],
-    "correct_answer": "C. Bob should combine his private key with Alice\u2019s public key.",
+    "correct_answer": "C. Bob should combine his private key with Alice’s public key.",
     "tags": [
       "cryptography",
       "private key",
@@ -4253,11 +4250,11 @@
     "question": "Alice and Bob want to securely communicate. Alice has Bob's public key and her own private key. How should she proceed to create a symmetric key for their communication?",
     "choices": [
       "A. Alice should combine her private key with her own public key.",
-      "B. Alice should combine her private key with Bob\u2019s public key.",
-      "C. Alice should combine Bob\u2019s private key with her public key.",
-      "D. Alice should combine Bob\u2019s public key with Bob\u2019s private key."
+      "B. Alice should combine her private key with Bob’s public key.",
+      "C. Alice should combine Bob’s private key with her public key.",
+      "D. Alice should combine Bob’s public key with Bob’s private key."
     ],
-    "correct_answer": "B. Alice should combine her private key with Bob\u2019s public key.",
+    "correct_answer": "B. Alice should combine her private key with Bob’s public key.",
     "tags": [
       "private key",
       "public key",
@@ -4290,7 +4287,6 @@
     "question": "Your organization has developed an internal application. To ensure its integrity and confirm its source, you have decided to use code signing. What is the most suitable approach in this scenario?",
     "choices": [
       "A. Use a trusted Certificate Authority (CA) to sign the developer's public key.",
-      "A. This is because you have control over your own CA and can manage trust within your organization.",
       "B. Use the developer's private key to sign the application code.",
       "C. Use a third-party CA to sign the developer's private key.",
       "D. Use your organization's own Certificate Authority (CA) to sign the developer's public key."
@@ -4866,7 +4862,6 @@
     "choices": [
       "A. Ethernet",
       "B. Bluetooth.",
-      "B. Bluetooth",
       "C. Satellite",
       "D. Fiber Optics"
     ],
@@ -5688,7 +5683,6 @@
       "A. 3 months",
       "B. 6 months",
       "C. 9 months.",
-      "C. 9 months",
       "D. 12 months"
     ],
     "correct_answer": "C. 9 months",
@@ -5816,8 +5810,7 @@
       "A. Server-based threat",
       "B. Network-based threat",
       "C. Hardware-based threat",
-      "D. Client-based threat.",
-      "D. Client-based threat"
+      "D. Client-based threat."
     ],
     "correct_answer": "D. Client-based threat",
     "tags": [
@@ -5833,8 +5826,7 @@
       "A. Network-based threat",
       "B. Server-based threat",
       "C. Social engineering threat",
-      "D. Client-based threat.",
-      "D. Client-based threat"
+      "D. Client-based threat."
     ],
     "correct_answer": "D. Client-based threat",
     "tags": [
@@ -5961,7 +5953,7 @@
   {
     "id": "2.4.10-Replay-Attacks_29",
     "text": "Pass the Hash",
-    "question": "You find out that one of the systems in your organization\u2019s network is unsupported. What could be the potential consequence of this situation?",
+    "question": "You find out that one of the systems in your organization’s network is unsupported. What could be the potential consequence of this situation?",
     "choices": [
       "A. The system can become an entry point for cyber attacks",
       "B. The system will automatically shut down",
@@ -6153,7 +6145,6 @@
     "choices": [
       "A. Pretexting",
       "B. Typosquatting.",
-      "B. Typosquatting",
       "C. Whaling",
       "D. Spear phishing"
     ],
@@ -6171,7 +6162,6 @@
     "choices": [
       "A. Whaling",
       "B. Pretexting.",
-      "B. Pretexting",
       "C. Typosquatting",
       "D. Spear phishing"
     ],
@@ -6225,8 +6215,7 @@
       "A. Fake check scam",
       "B. Advance-fee scam",
       "C. Phone verification code scam",
-      "D. Boss/CEO scam.",
-      "D. Boss/CEO scam"
+      "D. Boss/CEO scam."
     ],
     "correct_answer": "D. Boss/CEO scam",
     "tags": [
@@ -6241,7 +6230,6 @@
     "question": "You received an email claiming you have won a large sum of money. To claim the prize, you are asked to pay a small fee upfront. Which type of scam is this an example of?",
     "choices": [
       "A. Advance-fee scam.",
-      "A. Advance-fee scam",
       "B. Phone verification code scam",
       "C. Boss/CEO scam",
       "D. Fake check scam"
@@ -6260,7 +6248,6 @@
       "A. A ransomware attack",
       "B. A phishing attack",
       "C. An identity theft attack.",
-      "C. An identity theft attack",
       "D. A denial-of-service attack"
     ],
     "correct_answer": "C. An identity theft attack",
@@ -6501,7 +6488,7 @@
   {
     "id": "2.4.15-Indicators-of-Compromise_73",
     "text": "Impossible Travel",
-    "question": "Your organization\u2019s IT department has noticed an increase in malware infections among the company\u2019s finance personnel. Investigations reveal that the finance personnel frequently visit a finance-related website that has been compromised by an attacker. What type of attack does this scenario best illustrate?",
+    "question": "Your organization’s IT department has noticed an increase in malware infections among the company’s finance personnel. Investigations reveal that the finance personnel frequently visit a finance-related website that has been compromised by an attacker. What type of attack does this scenario best illustrate?",
     "choices": [
       "A. Phishing attack",
       "B. Distributed Denial of Service (DDoS) attack",
@@ -7058,7 +7045,7 @@
   },
   {
     "id": "2.4.6-Denial-of-Service_46",
-    "text": "A \u201cFriendly\u201d DoS",
+    "text": "A “Friendly” DoS",
     "question": "You are a cybersecurity analyst investigating a major breach at a retail corporation. The attack originated from a HVAC vendor linked to the corporation, and 40 million credit card details were stolen. What could have been the most likely attack vector in this scenario?",
     "choices": [
       "A. Infiltration via unsecured wireless network",
@@ -7104,7 +7091,6 @@
       "A. Nepotism",
       "B. Whistleblowing",
       "C. Conflict of Interest.",
-      "C. Conflict of Interest",
       "D. Insider Trading"
     ],
     "correct_answer": "C. Conflict of Interest",
@@ -7907,7 +7893,7 @@
   {
     "id": "2.5.3-Hardening-Techniques_92",
     "text": "Host-based Firewall",
-    "question": "In January 2004, the Mars rover \u201cSpirit\u201d experienced a problem due to a race condition. What was the associated issue that led to this problem?",
+    "question": "In January 2004, the Mars rover “Spirit” experienced a problem due to a race condition. What was the associated issue that led to this problem?",
     "choices": [
       "A. The rover's battery drained faster than expected.",
       "B. The rover lost communication with the control station on Earth.",
@@ -8346,7 +8332,6 @@
       "A. Containment, Eradication, and Recovery",
       "B. Post-incident Activity",
       "C. Detection and Analysis.",
-      "C. Detection and Analysis",
       "D. Preparation"
     ],
     "correct_answer": "C. Detection and Analysis",
@@ -8627,7 +8612,6 @@
       "A. Persistent XSS Attack",
       "B. SQL Injection Attack",
       "C. Non-persistent (Reflected) XSS Attack.",
-      "C. Non-persistent (Reflected) XSS Attack",
       "D. Cross-Site Request Forgery Attack"
     ],
     "correct_answer": "C. Non-persistent (Reflected) XSS Attack",
@@ -8661,11 +8645,11 @@
     "question": "A user authenticates with Subaru and receives a token. What could this token potentially allow if it was discovered to never expire?",
     "choices": [
       "A. It allows the user to change the color of their Subaru.",
-      "B. It allows any service request, including adding an email address to someone else\u2019s account.",
+      "B. It allows any service request, including adding an email address to someone else’s account.",
       "C. It allows the user to track the location of their Subaru.",
       "D. It allows the user to change their subscription plan."
     ],
-    "correct_answer": "B. It allows any service request, including adding an email address to someone else\u2019s account.",
+    "correct_answer": "B. It allows any service request, including adding an email address to someone else’s account.",
     "tags": [
       "expiration",
       "identity_and_access_management",
@@ -8716,11 +8700,11 @@
     "question": "In the Subaru hacking incident, what was one potential consequence of the XSS vulnerability on the web front-end?",
     "choices": [
       "A. It could allow someone to change the color of another person's Subaru.",
-      "B. It could allow unauthorized access to someone else\u2019s car.",
+      "B. It could allow unauthorized access to someone else’s car.",
       "C. It could allow someone to track the location of another person's Subaru.",
       "D. It could allow someone to change the subscription plan of another person's account."
     ],
-    "correct_answer": "B. It could allow unauthorized access to someone else\u2019s car.",
+    "correct_answer": "B. It could allow unauthorized access to someone else’s car.",
     "tags": [
       "cyber_attacks",
       "hacking",
@@ -8919,7 +8903,7 @@
     "choices": [
       "A. Ignore the vulnerability because the likelihood of exploitation is low",
       "B. Patch the vulnerability immediately regardless of the cost",
-      "C. Remove the vulnerability if it doesn\u2019t disrupt the service",
+      "C. Remove the vulnerability if it doesn’t disrupt the service",
       "D. Apply for an exception due to low risk and high cost of resolution"
     ],
     "correct_answer": "D. Apply for an exception due to low risk and high cost of resolution",
@@ -9746,8 +9730,7 @@
       "A. Man-in-the-middle attack",
       "B. Denial of service attack",
       "C. Phishing attack",
-      "D. Replay attack.",
-      "D. Replay attack"
+      "D. Replay attack."
     ],
     "correct_answer": "D. Replay attack",
     "tags": [
@@ -9995,7 +9978,6 @@
       "A. 30%",
       "B. 50%",
       "C. 70%.",
-      "C. 70%",
       "D. 90%"
     ],
     "correct_answer": "C. 70%",
@@ -10156,7 +10138,6 @@
       "A. Phishing",
       "B. SQL Injection",
       "C. Brute force.",
-      "C. Brute force",
       "D. Man-in-the-middle"
     ],
     "correct_answer": "C. Brute force",
@@ -10297,7 +10278,6 @@
     "choices": [
       "A. Password Complexity",
       "B. Password Age.",
-      "B. Password Age",
       "C. Password History",
       "D. Password Expiration"
     ],
@@ -10567,7 +10547,6 @@
     "choices": [
       "A. Program virus",
       "B. Boot sector virus.",
-      "B. Boot sector virus",
       "C. Script virus",
       "D. Macro virus"
     ],
@@ -10676,7 +10655,6 @@
       "A. Worm infection process",
       "B. Trojan infection process",
       "C. Fileless virus infection process.",
-      "C. Fileless virus infection process",
       "D. Macro virus infection process"
     ],
     "correct_answer": "C. Fileless virus infection process",
@@ -10693,8 +10671,7 @@
       "A. Fileless virus infection process",
       "B. Trojan infection process",
       "C. Macro virus infection process",
-      "D. Worm infection process.",
-      "D. Worm infection process"
+      "D. Worm infection process."
     ],
     "correct_answer": "D. Worm infection process",
     "tags": [
@@ -10743,11 +10720,11 @@
     "question": "You are about to install a new software on your computer. What should you keep in mind to protect your device from spyware?",
     "choices": [
       "A. Install the software as quickly as possible",
-      "B. Always know what you\u2019re installing and watch your options during the installation",
+      "B. Always know what you’re installing and watch your options during the installation",
       "C. Install the software without reading the terms and conditions",
       "D. Install the software on a public Wi-Fi network"
     ],
-    "correct_answer": "B. Always know what you\u2019re installing and watch your options during the installation",
+    "correct_answer": "B. Always know what you’re installing and watch your options during the installation",
     "tags": [
       "cybersecurity",
       "malware",
@@ -10888,7 +10865,6 @@
       "A. Ignore the report, as it doesn't pertain to your organization's current security measures",
       "B. Distribute the report to all employees as a warning",
       "C. Use the information to update your organization's security measures and invest in prevention.",
-      "C. Use the information to update your organization's security measures and invest in prevention",
       "D. Use the information to track down the threat actors and take legal action"
     ],
     "correct_answer": "C. Use the information to update your organization's security measures and invest in prevention",
@@ -11147,7 +11123,6 @@
       "A. A hardware issue",
       "B. A network configuration error",
       "C. A rootkit infection.",
-      "C. A rootkit infection",
       "D. A corrupted operating system"
     ],
     "correct_answer": "C. A rootkit infection",
@@ -11164,7 +11139,6 @@
       "A. Trojan horse",
       "B. Worm",
       "C. Rootkit.",
-      "C. Rootkit",
       "D. Ransomware"
     ],
     "correct_answer": "C. Rootkit",
@@ -12518,7 +12492,6 @@
       "A. SIEM report generator",
       "B. Long-term analysis tool",
       "C. Dashboard.",
-      "C. Dashboard",
       "D. Third-party report generator"
     ],
     "correct_answer": "C. Dashboard",
@@ -12821,10 +12794,10 @@
     "choices": [
       "A. Enabling screenshots and screen recordings for ease of use",
       "B. Allowing additional VPN profiles for flexibility",
-      "C. Configuring a \u201clost phone\u201d message and disabling screen recordings",
+      "C. Configuring a “lost phone” message and disabling screen recordings",
       "D. Preventing voice calls when the device is locked and enabling additional VPN profiles"
     ],
-    "correct_answer": "C. Configuring a \u201clost phone\u201d message and disabling screen recordings",
+    "correct_answer": "C. Configuring a “lost phone” message and disabling screen recordings",
     "tags": [
       "best practices",
       "data_protection",
@@ -13086,8 +13059,7 @@
       "A. Network Traffic Analyzer",
       "B. Firewall",
       "C. Intrusion Detection System",
-      "D. Security Information and Event Manager.",
-      "D. Security Information and Event Manager"
+      "D. Security Information and Event Manager."
     ],
     "correct_answer": "D. Security Information and Event Manager",
     "tags": [
@@ -13912,7 +13884,6 @@
     "choices": [
       "A. Telnet",
       "B. SSH.",
-      "B. SSH",
       "C. HTTPS",
       "D. API"
     ],
@@ -13932,7 +13903,6 @@
       "A. ICMP",
       "B. FTP",
       "C. API.",
-      "C. API",
       "D. SMTP"
     ],
     "correct_answer": "C. API",
@@ -13951,7 +13921,6 @@
       "A. Device encryption",
       "B. Cloud computing",
       "C. Physical segmentation.",
-      "C. Physical segmentation",
       "D. Virtual segmentation"
     ],
     "correct_answer": "C. Physical segmentation",
@@ -14969,7 +14938,6 @@
     "question": "You are a new IT support technician at a company that uses Linux systems. Your first task is to reset a user's password. Which system is commonly used for such tasks?",
     "choices": [
       "A. Security-Enhanced Linux (SELinux).",
-      "A. Security-Enhanced Linux (SELinux)",
       "B. Windows Defender",
       "C. Firewall",
       "D. Antivirus software"
@@ -15512,7 +15480,6 @@
       "A. Fail-closed",
       "B. Passive Monitoring",
       "C. Fail-open.",
-      "C. Fail-open",
       "D. Active Monitoring"
     ],
     "correct_answer": "C. Fail-open",
@@ -15657,7 +15624,6 @@
       "A. Fail-open",
       "B. Passive Monitoring",
       "C. Fail-closed.",
-      "C. Fail-closed",
       "D. Active Monitoring"
     ],
     "correct_answer": "C. Fail-closed",
@@ -16265,7 +16231,6 @@
       "A. Simple Network Management Protocol (SNMP)",
       "B. Internet Group Management Protocol (IGMP)",
       "C. Port Security IEEE 802.1X.",
-      "C. Port Security IEEE 802.1X",
       "D. Network Address Translation (NAT)"
     ],
     "correct_answer": "C. Port Security IEEE 802.1X",
@@ -16284,7 +16249,6 @@
       "A. Dynamic Host Configuration Protocol (DHCP)",
       "B. Domain Name System (DNS)",
       "C. Port Security IEEE 802.1X.",
-      "C. Port Security IEEE 802.1X",
       "D. Internet Protocol Security (IPSec)"
     ],
     "correct_answer": "C. Port Security IEEE 802.1X",
@@ -16529,7 +16493,6 @@
       "A. TCP/IP",
       "B. OSPF",
       "C. EAP with 802.1X.",
-      "C. EAP with 802.1X",
       "D. BGP"
     ],
     "correct_answer": "C. EAP with 802.1X",
@@ -17020,11 +16983,11 @@
     "question": "You are a network administrator and need to troubleshoot a reported issue. Why would it be beneficial to associate a support ticket with a specific device make and model?",
     "choices": [
       "A. It allows for easier tracking of budgeting and approvals",
-      "B. It can provide more detailed information than a user\u2019s description",
+      "B. It can provide more detailed information than a user’s description",
       "C. It allows for easier negotiation with suppliers",
       "D. It makes the purchasing process simpler"
     ],
-    "correct_answer": "B. It can provide more detailed information than a user\u2019s description",
+    "correct_answer": "B. It can provide more detailed information than a user’s description",
     "tags": [
       "device make and model",
       "support ticket",
@@ -18067,8 +18030,7 @@
       "A. Password Complexity",
       "B. Password Length",
       "C. Password Age",
-      "D. Password Expiration.",
-      "D. Password Expiration"
+      "D. Password Expiration."
     ],
     "correct_answer": "D. Password Expiration",
     "tags": [
@@ -18084,7 +18046,6 @@
       "A. Business Continuity",
       "B. High-Level Strategies",
       "C. Detailed Security Goals.",
-      "C. Detailed Security Goals",
       "D. Security Policies Answer the \"What\" and \"Why\""
     ],
     "correct_answer": "C. Detailed Security Goals",
@@ -19575,7 +19536,6 @@
       "A. Upgrade the operating system",
       "B. Install a new antivirus software",
       "C. Perform media sanitization.",
-      "C. Perform media sanitization",
       "D. Replace the hard drives"
     ],
     "correct_answer": "C. Perform media sanitization",
