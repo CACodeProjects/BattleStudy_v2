@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -13,6 +14,7 @@
             --accent: #7c4dff;
         }
 
+        
         body {
             font-family: "Segoe UI Emoji", "Segoe UI", sans-serif;
             background: linear-gradient(to bottom, #1f1c2c, #928dab);
@@ -108,12 +110,15 @@
             }
         }
     </style>
+    
+
 </head>
 <body>
     <div class="container">
         <h1>🧙 Wizard Battle - {{ username.title() }}{% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %} - Game Over{% endif %}</h1>
         <h2>🌍 World: {{ world }}</h2>
 
+        
         {% if error_message %}
         <div class="battle-box">
             <p>{{ error_message }}</p>
@@ -123,28 +128,39 @@
         </div>
         {% endif %}
 
-        {% if session.get("last_result") %}
         <div class="battle-box">
-            <p>
-                {% if "Correct!" in session.get("last_result", "") %} 🎯 {% elif "Wrong!" in session.get("last_result", "") %} ❌ {% endif %}
-                {{ session.pop("last_result")|safe }}
+            {% if result %}
+            <p class="battle-result">
+                {% if "Correct!" in result %} 🎯 <strong>Correct Answer!</strong><br>
+                {% elif "Wrong!" in result %} ❌ <strong>Incorrect!</strong><br>
+                {% endif %}
+                {{ result.replace('Correct!', '').replace('Wrong!', '')|safe }}
             </p>
-
-            <div class="hp-bar">
-                <div class="hp-bar-inner" style="width: {{ session['player_hp'] }}%; background-color: var(--player-color);"></div>
-            </div>
-            <p>🧍 Your HP: {{ session['player_hp'] }} / 100</p>
-
-            <div class="hp-bar">
-                <div class="hp-bar-inner" style="width: {{ session['wizard_hp'] }}%; background-color: var(--enemy-color);"></div>
-            </div>
-            <p>🧙 Wizard HP: {{ session['wizard_hp'] }} / 100</p>
-
-            <p>⭐ XP: {{ profile['xp'] }}</p>
-
-            {% if difficulty > 1 %}
-            <p>⏳ This question was answered incorrectly before. Difficulty has increased.</p>
             {% endif %}
+
+            <div style="display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1;">
+                    <div class="hp-bar">
+                        <div class="hp-bar-inner" style="width: {{ session['player_hp'] }}%; background-color: var(--player-color);"></div>
+                    </div>
+                    <p style="text-align: center;">🧍 Your HP: {{ session['player_hp'] }} / 100</p>
+
+                </div>
+
+                <div style="flex: 1;">
+                    <div class="hp-bar">
+                        <div class="hp-bar-inner" style="width: {{ session['wizard_hp'] }}%; background-color: var(--enemy-color);"></div>
+                    </div>
+                    <p style="text-align: center;">🧙 Wizard HP: {{ session['wizard_hp'] }} / 100</p>
+
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 40px; margin-top: 10px;">
+                <p>⭐ XP: {{ profile['xp'] }}</p>
+                <p>⚡ Streak: {{ session['streak'] }}</p>
+            </div>
+
 
             {% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %}
             <form action="{{ url_for('restart_battle') }}" method="post" style="margin-bottom: 10px;">
@@ -155,10 +171,13 @@
             </form>
             {% endif %}
         </div>
-        {% endif %}
 
         {% if question and session['wizard_hp'] > 0 and session['player_hp'] > 0 %}
         <div class="battle-box">
+            {% if difficulty > 1 %}
+            <p>⏳ This question was answered incorrectly before. Difficulty has increased.</p>
+            {% endif %}
+
             <p>
                 <strong>🧠 Question</strong>
                 {% if difficulty == 1 %} <span>🟢 Easy</span>
@@ -166,6 +185,7 @@
                 {% elif difficulty == 3 %} <span>🔴 Hard</span>
                 {% endif %}
             </p>
+
             <p>{{ question['question'] or question['text'] }}</p>
 
             <form method="post">
@@ -181,6 +201,8 @@
             </form>
         </div>
         {% endif %}
+        
+
     </div>
 </body>
 </html>

@@ -37,6 +37,14 @@ def index():
         username = request.form["username"].strip().lower()
         session["username"] = username
 
+        # ✅ Clear battle session state on login
+        session["player_hp"] = 100
+        session["wizard_hp"] = 100
+        session["streak"] = 0
+        session.pop("last_result", None)
+        session.pop("question", None)
+        session.pop("world", None)
+
         user = User.query.filter_by(username=username).first()
         if not user:
             user = User(username=username, email=f"{username}@example.com")
@@ -54,12 +62,24 @@ def choose_world():
     chapters = sorted({q.get("chapter", "Mixed") for q in all_questions})
     if request.method == "POST":
         session["world"] = request.form["world"]
-        session["player_hp"] = 100
-        session["wizard_hp"] = 100
-        session["streak"] = 0
+
+        # Only reset HP and streak if the battle has ended
+        if session.get("player_hp", 100) == 0 or session.get("wizard_hp", 100) == 0:
+            session["player_hp"] = 100
+            session["wizard_hp"] = 100
+            session["streak"] = 0
+
         session.pop("last_result", None)
         return redirect(url_for("battle"))
-    return render_template("choose_world.html", chapters=chapters)
+        
+    return render_template(
+    "choose_world.html",
+    chapters=chapters,
+    player_hp=session.get("player_hp", 100),
+    wizard_hp=session.get("wizard_hp", 100),
+    streak=session.get("streak", 0),
+)
+
 
 @app.route("/battle", methods=["GET", "POST"])
 def battle():
@@ -76,16 +96,25 @@ def battle():
 
     progresses = {p.question_id: p for p in user.question_progress}
 
+    # Decrease cooldowns
     for p in progresses.values():
         if p.cooldown > 0:
             p.cooldown -= 1
     db.session.commit()
 
+    # ✅ Handle answer submission
     if request.method == "POST":
         qid = request.form["qid"]
         user_answer = request.form["answer"]
         world = request.form["world"]
-        question = next((q for q in all_questions if str(q["id"]) == qid), {})
+
+        question = session.get("question")
+
+        # ✅ Protect against mismatch or missing session
+        if not question or str(question["id"]) != qid:
+            flash("Question mismatch — please try again.")
+            return redirect(url_for("battle"))
+
         correct_answer = question.get("correct_answer", "")
         correct_letter = correct_answer[0].upper() if correct_answer else ""
 
@@ -94,10 +123,10 @@ def battle():
             progress = QuestionProgress(user_id=user.id, question_id=qid, difficulty_level=1)
             db.session.add(progress)
             db.session.commit()
-            progresses[qid] = progress  # update dict to reflect new progress
+            progresses[qid] = progress
 
         difficulty = progress.difficulty_level or 1
-        is_correct = user_answer == correct_letter
+        is_correct = user_answer.strip().upper() == correct_letter
 
         damage_config = {
             "player_damage": {1: 10, 2: 15, 3: 25},
@@ -113,25 +142,36 @@ def battle():
             result = f"Correct! You hit the wizard for {dmg_to_wizard} damage."
             progress.cooldown = 3
             progress.mistakes = 0
+            # ✅ Decrease difficulty if greater than 1
+            if progress.difficulty_level > 1:
+                progress.difficulty_level -= 1
+
         else:
             session["player_hp"] -= dmg_to_player
             session["streak"] = 0
-            result = f"Wrong! The wizard hit you for {dmg_to_player} damage.<br>Correct answer: {correct_answer}"
+            result = f"❌ Wrong! The wizard hit you for {dmg_to_player} damage.<br>Correct answer: {correct_answer}"
             progress.cooldown = 1
             progress.mistakes += 1
             progress.difficulty_level = min(difficulty + 1, 3)
 
-        db.session.commit()
-        session["last_result"] = result
-
+        # Battle end check
         if session["wizard_hp"] <= 0:
-            session["last_result"] += "<br>You defeated the wizard! +50 XP"
-            user.xp += 50
             session["wizard_hp"] = 0
             session["player_hp"] = 0
-            db.session.commit()
+            result += "<br>🏆 You defeated the wizard! +50 XP"
+            user.xp += 50
         elif session["player_hp"] <= 0:
-            session["last_result"] += "<br>You were defeated by the wizard."
+            session["player_hp"] = 0
+            result += "<br>💀 You were defeated by the wizard."
+
+        db.session.commit()
+
+        # ✅ Store result, redirect to GET (prevents refresh bug)
+        session["last_result"] = result
+        return redirect(url_for("battle"))
+
+    # ✅ GET: show new question and last result (if any)
+    last_result = session.pop("last_result", None)
 
     question_ids_on_cooldown = [str(p.question_id) for p in progresses.values() if p.cooldown > 0]
 
@@ -151,6 +191,7 @@ def battle():
             mistakes=0,
             question=None,
             error_message=f"No available questions in {world}.",
+            result=last_result,
         )
 
     question = random.choice(usable_questions)
@@ -159,13 +200,19 @@ def battle():
     difficulty = progress.difficulty_level or 1
     mistakes = progress.mistakes
 
-    return render_template("battle.html",
-                           username=username,
-                           world=world,
-                           question=question,
-                           profile=user,
-                           difficulty=difficulty,
-                           mistakes=mistakes)
+    session["question"] = question  # ✅ Store for answer validation
+
+    return render_template(
+        "battle.html",
+        username=username,
+        world=world,
+        question=question,
+        profile=user,
+        difficulty=difficulty,
+        mistakes=mistakes,
+        result=last_result
+    )
+
 
 @app.route("/restart", methods=["POST"])
 def restart_battle():
