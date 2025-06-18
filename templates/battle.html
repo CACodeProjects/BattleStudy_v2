@@ -14,7 +14,7 @@
             --accent: #7c4dff;
         }
 
-        
+
         body {
             font-family: "Segoe UI Emoji", "Segoe UI", sans-serif;
             background: linear-gradient(to bottom, #1f1c2c, #928dab);
@@ -110,7 +110,7 @@
             }
         }
     </style>
-    
+
 
 </head>
 <body>
@@ -118,7 +118,6 @@
         <h1>🧙 Wizard Battle - {{ username.title() }}{% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %} - Game Over{% endif %}</h1>
         <h2>🌍 World: {{ world }}</h2>
 
-        
         {% if error_message %}
         <div class="battle-box">
             <p>{{ error_message }}</p>
@@ -138,29 +137,35 @@
             </p>
             {% endif %}
 
+            {% set hp_player = session.get('final_player_hp', session.get('player_hp', 100)) %}
+
+            {% set hp_wizard = session.get('final_wizard_hp', session.get('wizard_hp', 100)) %}
+
+
             <div style="display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap;">
                 <div style="flex: 1;">
                     <div class="hp-bar">
-                        <div class="hp-bar-inner" style="width: {{ session['player_hp'] }}%; background-color: var(--player-color);"></div>
+                        <div class="hp-bar-inner" style="width: {{ hp_player }}%; background-color: var(--player-color);"></div>
                     </div>
-                    <p style="text-align: center;">🧍 Your HP: {{ session['player_hp'] }} / 100</p>
-
+                    <p style="text-align: center;">🧍 Your HP: {{ hp_player }} / 100</p>
                 </div>
 
                 <div style="flex: 1;">
                     <div class="hp-bar">
-                        <div class="hp-bar-inner" style="width: {{ session['wizard_hp'] }}%; background-color: var(--enemy-color);"></div>
+                        <div class="hp-bar-inner" style="width: {{ hp_wizard }}%; background-color: var(--enemy-color);"></div>
                     </div>
-                    <p style="text-align: center;">🧙 Wizard HP: {{ session['wizard_hp'] }} / 100</p>
-
+                    <p style="text-align: center;">🧙 Wizard HP: {{ hp_wizard }} / 100</p>
                 </div>
             </div>
 
             <div style="display: flex; justify-content: center; gap: 40px; margin-top: 10px;">
                 <p>⭐ XP: {{ profile['xp'] }}</p>
                 <p>⚡ Streak: {{ session['streak'] }}</p>
-            </div>
+                {% if question %}
+                <p>📊 Questions: {{ questions_answered }} / {{ total_questions }}</p>
+                {% endif %}
 
+            </div>
 
             {% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %}
             <form action="{{ url_for('restart_battle') }}" method="post" style="margin-bottom: 10px;">
@@ -201,8 +206,8 @@
             </form>
         </div>
         {% endif %}
-        
-
     </div>
+</body>
+
 </body>
 </html>
