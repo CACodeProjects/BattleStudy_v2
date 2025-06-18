@@ -49,6 +49,8 @@ class QuestionProgress(db.Model):
     cooldown = db.Column(db.Integer, default=0)
     mistakes = db.Column(db.Integer, default=0)
     difficulty_level = db.Column(db.Integer, default=1)
+    chapter = db.Column(db.String, nullable=True)  # ✅ NEW FIELD
+
 
 
 
