@@ -1,4 +1,4 @@
-# 🧙‍♂️ Updated app.py — Cooldown Based on Total Questions (with Comments)
+# 🔙️ Updated app.py — Final Fix: Accurate Question Completion Filtering + Cooldown Handling
 
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -11,10 +11,8 @@ import random
 import socket
 import os
 
-# Load environment variables
 load_dotenv()
 
-# Initialize Flask app and configuration
 app = Flask(__name__)
 app.secret_key = "secret"
 app.config['JSON_AS_ASCII'] = False
@@ -24,12 +22,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
-# Load questions from JSON file
-QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v4.json")
+QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v5.json")
 with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
     all_questions = json.load(f)
 
-# Homepage — username input
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -42,7 +38,6 @@ def index():
         session.pop("question", None)
         session.pop("world", None)
 
-        # Create user if not exists
         user = User.query.filter_by(username=username).first()
         if not user:
             user = User(username=username, email=f"{username}@example.com")
@@ -52,21 +47,17 @@ def index():
         return redirect(url_for("choose_world"))
     return render_template("index.html")
 
-# World selection screen
 @app.route("/choose-world", methods=["GET", "POST"])
 def choose_world():
     chapters = sorted({q.get("chapter", "Mixed") for q in all_questions})
     if request.method == "POST":
         session["world"] = request.form["world"]
-
-        # If last battle ended, reset health
         if session.get("player_hp", 100) <= 0 or session.get("wizard_hp", 100) <= 0:
             session["player_hp"] = 100
             session["wizard_hp"] = 100
             session["streak"] = 0
             session.pop("final_player_hp", None)
             session.pop("final_wizard_hp", None)
-
         session.pop("last_result", None)
         return redirect(url_for("battle"))
 
@@ -80,28 +71,23 @@ def choose_world():
         battle_active=battle_active
     )
 
-# Main battle route — GET (next question) and POST (submit answer)
 @app.route("/battle", methods=["GET", "POST"])
 def battle():
     username = session.get("username")
     user = User.query.filter_by(username=username).first()
     world = session.get("world", "ALL")
 
-    # Ensure default session state
     session["player_hp"] = session.get("player_hp", 100)
     session["wizard_hp"] = session.get("wizard_hp", 100)
     session["streak"] = session.get("streak", 0)
 
-    # Clear final HP tracking if new battle started
     if session["player_hp"] > 0:
         session.pop("final_player_hp", None)
     if session["wizard_hp"] > 0:
         session.pop("final_wizard_hp", None)
 
-    # Map user progress into a dictionary
     progresses = {str(p.question_id): p for p in user.question_progress}
 
-    # ✅ POST branch — handle answer
     if request.method == "POST":
         qid = request.form["qid"]
         user_answer = request.form["answer"]
@@ -115,7 +101,6 @@ def battle():
         correct_answer = question.get("correct_answer", "")
         correct_letter = correct_answer[0].upper() if correct_answer else ""
 
-        # Get or create progress record
         qid_str = str(qid)
         progress = progresses.get(qid_str)
         if not progress:
@@ -140,22 +125,16 @@ def battle():
         dmg_to_wizard = damage_config["wizard_damage"][difficulty]
         dmg_to_player = damage_config["player_damage"][difficulty]
 
-        # Get number of questions in current world for cooldown scaling
         world_questions = [q for q in all_questions if world == "ALL" or q.get("chapter") == world]
         total_questions = len(world_questions)
 
         if is_correct:
-            # ✅ Decrease cooldowns only after a correct answer
-            for p in progresses.values():
-                if p.cooldown > 0:
-                    p.cooldown -= 1
-            db.session.commit()
-
             session["wizard_hp"] -= dmg_to_wizard
             user.xp += 10
             session["streak"] += 1
             result = f"Correct! You hit the wizard for {dmg_to_wizard} damage."
-            progress.cooldown = total_questions + 1  # ✅ Prevent reappearance in same session
+            progress.cooldown = total_questions + 1
+            progress.completed = True
             progress.mistakes = 0
             if progress.difficulty_level > 1:
                 progress.difficulty_level -= 1
@@ -163,11 +142,16 @@ def battle():
             session["player_hp"] -= dmg_to_player
             session["streak"] = 0
             result = f"❌ Wrong! The wizard hit you for {dmg_to_player} damage.<br>Correct answer: {correct_answer}"
-            progress.cooldown = 1  # ✅ Retry soon
+            progress.cooldown = 1
+            progress.completed = False
             progress.mistakes += 1
             progress.difficulty_level = min(difficulty + 1, 3)
 
-        # Battle outcome check
+        # Decrease cooldowns only for questions that were NOT just answered
+        for p in user.question_progress:
+            if str(p.question_id) != qid_str and p.cooldown > 0:
+                p.cooldown -= 1
+
         if session["wizard_hp"] <= 0:
             session["final_player_hp"] = session["player_hp"]
             session["final_wizard_hp"] = 0
@@ -185,18 +169,38 @@ def battle():
         session["last_result"] = result
         return redirect(url_for("battle"))
 
-    # ✅ GET branch — show next question
-    user = User.query.filter_by(username=session.get("username")).first()
-    progresses = {str(p.question_id): p for p in user.question_progress}
+    # GET logic continues here
     last_result = session.pop("last_result", None)
 
-    question_ids_on_cooldown = {str(p.question_id) for p in progresses.values() if p.cooldown > 0}
-    usable_questions = [
-        q for q in all_questions
-        if (world == "ALL" or q.get("chapter") == world)
-        and str(q["id"]) not in question_ids_on_cooldown
-    ]
+    # ✅ More accurate filtering for usable questions
+    # ✅ More accurate filtering for usable questions
+    usable_questions = []
+    for q in all_questions:
+        if world != "ALL" and q.get("chapter") != world:
+            continue  # skip if not in selected world
 
+        qid = str(q["id"])
+        progress = progresses.get(qid)
+
+        if not progress:
+            usable_questions.append(q)  # never seen → usable
+        elif progress.completed is False and progress.cooldown == 0:
+            usable_questions.append(q)  # not completed + cooldown expired → usable
+
+    # Calculate progress before possibly rendering "no questions left"
+    world_questions = [q for q in all_questions if world == "ALL" or q.get("chapter") == world]
+    total_questions = len(world_questions)
+    world_question_ids = {str(q["id"]) for q in world_questions}
+
+    answered_ids = {
+        str(p.question_id)
+        for p in user.question_progress
+        if p.completed and (p.chapter == world or world == "ALL")
+    }
+    questions_answered = len(world_question_ids & answered_ids)
+
+
+    # 🔁 FIXED: check AFTER the loop, not inside it
     if not usable_questions:
         return render_template(
             "battle.html",
@@ -208,31 +212,23 @@ def battle():
             question=None,
             error_message=f"No available questions in {world}.",
             result=last_result,
-            questions_answered=0,
-            total_questions=0
+            questions_answered=questions_answered,
+            total_questions=total_questions
         )
 
-    # Choose random usable question
+
     question = random.choice(usable_questions)
     qid = str(question["id"])
-    progress = progresses.get(qid, QuestionProgress())
-    difficulty = progress.difficulty_level or 1
-    mistakes = progress.mistakes
+    progress = progresses.get(qid)
+
+    difficulty = progress.difficulty_level if progress else 1
+    mistakes = progress.mistakes if progress else 0
     session["question"] = question
 
-    # Track progress: questions answered vs total
-    world_questions = [q for q in all_questions if world == "ALL" or q.get("chapter") == world]
-    total_questions = len(world_questions)
-    world_question_ids = {str(q["id"]) for q in world_questions}
-    answered_ids = {str(p.question_id) for p in progresses.values() if p.cooldown > 0}
-    questions_answered = len(world_question_ids & answered_ids)
-
-    # Debug print for dev testing
     print("Current qid:", qid)
-    print("Cooldown IDs:", question_ids_on_cooldown)
-    print("Answered IDs:", answered_ids)
     print("Questions Answered:", questions_answered)
-    print("Total Questions in world:", total_questions)
+    print("Total Questions in world:", len(world_question_ids))
+    print("🧪 DEBUG — Correct Answer:", question.get("correct_answer", "N/A"))
 
     return render_template(
         "battle.html",
@@ -244,10 +240,10 @@ def battle():
         mistakes=mistakes,
         result=last_result,
         questions_answered=questions_answered,
-        total_questions=total_questions
+        total_questions=len(world_question_ids)
     )
 
-# Restart handler — resets game state
+
 @app.route("/restart", methods=["POST"])
 def restart_battle():
     session["player_hp"] = 100
@@ -256,7 +252,6 @@ def restart_battle():
     session.pop("last_result", None)
     return redirect(url_for("battle"))
 
-# Local testing boot script
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
