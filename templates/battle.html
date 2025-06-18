@@ -1,5 +1,5 @@
+<!-- battle.html -->
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -13,7 +13,6 @@
             --bg-box: #2e2a47;
             --accent: #7c4dff;
         }
-
 
         body {
             font-family: "Segoe UI Emoji", "Segoe UI", sans-serif;
@@ -110,14 +109,14 @@
             }
         }
     </style>
-
-
 </head>
 <body>
     <div class="container">
+        <!-- Title and World -->
         <h1>🧙 Wizard Battle - {{ username.title() }}{% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %} - Game Over{% endif %}</h1>
         <h2>🌍 World: {{ world }}</h2>
 
+        <!-- Error if no questions -->
         {% if error_message %}
         <div class="battle-box">
             <p>{{ error_message }}</p>
@@ -127,6 +126,7 @@
         </div>
         {% endif %}
 
+        <!-- Battle Summary -->
         <div class="battle-box">
             {% if result %}
             <p class="battle-result">
@@ -137,10 +137,9 @@
             </p>
             {% endif %}
 
+            <!-- HP Bars -->
             {% set hp_player = session.get('final_player_hp', session.get('player_hp', 100)) %}
-
             {% set hp_wizard = session.get('final_wizard_hp', session.get('wizard_hp', 100)) %}
-
 
             <div style="display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap;">
                 <div style="flex: 1;">
@@ -158,15 +157,16 @@
                 </div>
             </div>
 
+            <!-- XP / Streak / Questions Progress -->
             <div style="display: flex; justify-content: center; gap: 40px; margin-top: 10px;">
                 <p>⭐ XP: {{ profile['xp'] }}</p>
                 <p>⚡ Streak: {{ session['streak'] }}</p>
                 {% if question %}
                 <p>📊 Questions: {{ questions_answered }} / {{ total_questions }}</p>
                 {% endif %}
-
             </div>
 
+            <!-- End-of-battle options -->
             {% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %}
             <form action="{{ url_for('restart_battle') }}" method="post" style="margin-bottom: 10px;">
                 <button class="button" type="submit">🔄 Start New Battle (Same World)</button>
@@ -177,6 +177,7 @@
             {% endif %}
         </div>
 
+        <!-- Question Form (only if alive and battle active) -->
         {% if question and session['wizard_hp'] > 0 and session['player_hp'] > 0 %}
         <div class="battle-box">
             {% if difficulty > 1 %}
@@ -207,7 +208,5 @@
         </div>
         {% endif %}
     </div>
-</body>
-
 </body>
 </html>
