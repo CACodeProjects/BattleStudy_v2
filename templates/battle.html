@@ -116,6 +116,16 @@
         <h1>🧙 Wizard Battle - {{ username.title() }}{% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %} - Game Over{% endif %}</h1>
         <h2>🌍 World: {{ world }}</h2>
 
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="battle-box" style="background-color: #5c2f2f;">
+            {% for message in messages %}
+            <p style="margin: 0;">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <!-- Error if no questions -->
         {% if error_message %}
         <div class="battle-box">
@@ -133,7 +143,7 @@
                 {% if "Correct!" in result %} 🎯 <strong>Correct Answer!</strong><br>
                 {% elif "Wrong!" in result %} ❌ <strong>Incorrect!</strong><br>
                 {% endif %}
-                {{ result.replace('Correct!', '').replace('Wrong!', '')|safe }}
+                {{ result.replace('Correct!', '').replace('Wrong!', '')|e|replace('\n', '<br>\n')|safe }}
             </p>
             {% endif %}
 
