@@ -1,7 +1,6 @@
 # 🔙️ Updated app.py — Final Fix: Accurate Question Completion Filtering + Cooldown Handling
 
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_migrate import Migrate
 from models import db, User, QuestionProgress
 from dotenv import load_dotenv
@@ -14,9 +13,9 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "secret"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
 app.config['JSON_AS_ASCII'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///default.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -29,7 +28,12 @@ with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        username = request.form["username"].strip().lower()
+        username = request.form.get("username", "").strip().lower()
+
+        if not username:
+            flash("Please enter a valid username.")
+            return redirect(url_for("index"))
+
         session["username"] = username
         session["player_hp"] = 100
         session["wizard_hp"] = 100
@@ -74,7 +78,16 @@ def choose_world():
 @app.route("/battle", methods=["GET", "POST"])
 def battle():
     username = session.get("username")
+    if not username:
+        flash("Please enter your username to start a battle.")
+        return redirect(url_for("index"))
+
     user = User.query.filter_by(username=username).first()
+    if not user:
+        session.clear()
+        flash("Your session expired. Please sign in again.")
+        return redirect(url_for("index"))
+
     world = session.get("world", "ALL")
 
     session["player_hp"] = session.get("player_hp", 100)
@@ -141,7 +154,7 @@ def battle():
         else:
             session["player_hp"] -= dmg_to_player
             session["streak"] = 0
-            result = f"❌ Wrong! The wizard hit you for {dmg_to_player} damage.<br>Correct answer: {correct_answer}"
+            result = f"❌ Wrong! The wizard hit you for {dmg_to_player} damage.\nCorrect answer: {correct_answer}"
             progress.cooldown = 1
             progress.completed = False
             progress.mistakes += 1
@@ -157,13 +170,13 @@ def battle():
             session["final_wizard_hp"] = 0
             session["wizard_hp"] = 0
             session["player_hp"] = 0
-            result += "<br>🏆 You defeated the wizard! +50 XP"
+            result += "\n🏆 You defeated the wizard! +50 XP"
             user.xp += 50
         elif session["player_hp"] <= 0:
             session["final_player_hp"] = 0
             session["final_wizard_hp"] = session["wizard_hp"]
             session["player_hp"] = 0
-            result += "<br>💀 You were defeated by the wizard."
+            result += "\n💀 You were defeated by the wizard."
 
         db.session.commit()
         session["last_result"] = result
@@ -172,7 +185,6 @@ def battle():
     # GET logic continues here
     last_result = session.pop("last_result", None)
 
-    # ✅ More accurate filtering for usable questions
     # ✅ More accurate filtering for usable questions
     usable_questions = []
     for q in all_questions:
@@ -258,4 +270,8 @@ if __name__ == "__main__":
     host_ip = socket.gethostbyname(socket.gethostname())
     print(f"Local network access: http://{host_ip}:5000")
     print("Access on this machine: http://127.0.0.1:5000")
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(
+        debug=os.environ.get("FLASK_DEBUG", "false").lower() == "true",
+        host="0.0.0.0",
+        port=5000,
+    )

@@ -81,6 +81,15 @@
     <div class="container">
         <div class="battle-box">
             <h1>🧙 Enter Your Wizard Name</h1>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div style="background-color: #5c2f2f; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                {% for message in messages %}
+                <p style="margin: 0;">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
             <form method="post">
                 <input type="text" name="username" placeholder="e.g. Gandalf" required />
                 <button class="button" type="submit">🔮 Begin Your Journey</button>
