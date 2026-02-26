@@ -1,6 +1,7 @@
 <!-- battle.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,10 +34,11 @@
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             text-align: center;
             margin-bottom: 10px;
         }
@@ -67,9 +69,9 @@
             margin-top: 10px;
         }
 
-            .button:hover {
-                background-color: #b388ff;
-            }
+        .button:hover {
+            background-color: #b388ff;
+        }
 
         label {
             display: block;
@@ -80,6 +82,32 @@
         input[type="radio"] {
             transform: scale(1.2);
             margin-right: 8px;
+        }
+
+        .answer-option {
+            display: grid;
+            grid-template-columns: 28px auto 1fr;
+            align-items: start;
+            column-gap: 10px;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            line-height: 1.35;
+            cursor: pointer;
+        }
+
+        .answer-option input[type="radio"] {
+            margin: 4px 0 0 0;
+            flex-shrink: 0;
+        }
+
+        .choice-prefix {
+            font-weight: 600;
+        }
+
+        .choice-text {
+            display: block;
+            white-space: normal;
+            overflow-wrap: anywhere;
         }
 
         @media screen and (max-width: 600px) {
@@ -110,113 +138,123 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Title and World -->
-        <h1>🧙 Wizard Battle - {{ username.title() }}{% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %} - Game Over{% endif %}</h1>
-        <h2>🌍 World: {{ world }}</h2>
+        <h1>🧙 Wizard Battle - {{ username.title() }}{% if session['wizard_hp'] <= 0 or session['player_hp'] <=0 %} -
+                Game Over{% endif %}</h1>
+                <h2>🌍 World: {{ world }}</h2>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="battle-box" style="background-color: #5c2f2f;">
-            {% for message in messages %}
-            <p style="margin: 0;">{{ message }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
-        {% endwith %}
-
-        <!-- Error if no questions -->
-        {% if error_message %}
-        <div class="battle-box">
-            <p>{{ error_message }}</p>
-            <form action="{{ url_for('choose_world') }}" method="get">
-                <button class="button" type="submit">🌍 Choose Another World</button>
-            </form>
-        </div>
-        {% endif %}
-
-        <!-- Battle Summary -->
-        <div class="battle-box">
-            {% if result %}
-            <p class="battle-result">
-                {% if "Correct!" in result %} 🎯 <strong>Correct Answer!</strong><br>
-                {% elif "Wrong!" in result %} ❌ <strong>Incorrect!</strong><br>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="battle-box" style="background-color: #5c2f2f;">
+                    {% for message in messages %}
+                    <p style="margin: 0;">{{ message }}</p>
+                    {% endfor %}
+                </div>
                 {% endif %}
-                <span style="white-space: pre-line;">{{ result.replace('Correct!', '').replace('Wrong!', '')|e }}</span>
-            </p>
-            {% endif %}
+                {% endwith %}
 
-            <!-- HP Bars -->
-            {% set hp_player = session.get('final_player_hp', session.get('player_hp', 100)) %}
-            {% set hp_wizard = session.get('final_wizard_hp', session.get('wizard_hp', 100)) %}
+                <!-- Error if no questions -->
+                {% if error_message %}
+                <div class="battle-box">
+                    <p>{{ error_message }}</p>
+                    <form action="{{ url_for('choose_world') }}" method="get">
+                        <button class="button" type="submit">🌍 Choose Another World</button>
+                    </form>
+                </div>
+                {% endif %}
 
-            <div style="display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap;">
-                <div style="flex: 1;">
-                    <div class="hp-bar">
-                        <div class="hp-bar-inner" style="width: {{ hp_player }}%; background-color: var(--player-color);"></div>
+                <!-- Battle Summary -->
+                <div class="battle-box">
+                    {% if result %}
+                    <p class="battle-result">
+                        {% if "Correct!" in result %} 🎯 <strong>Correct Answer!</strong><br>
+                        {% elif "Wrong!" in result %} ❌ <strong>Incorrect!</strong><br>
+                        {% endif %}
+                        <span style="white-space: pre-line;">{{ result.replace('Correct!', '').replace('Wrong!', '')|e
+                            }}</span>
+                    </p>
+                    {% endif %}
+
+                    <!-- HP Bars -->
+                    {% set hp_player = session.get('final_player_hp', session.get('player_hp', 100)) %}
+                    {% set hp_wizard = session.get('final_wizard_hp', session.get('wizard_hp', 100)) %}
+
+                    <div
+                        style="display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap;">
+                        <div style="flex: 1;">
+                            <div class="hp-bar">
+                                <div class="hp-bar-inner"
+                                    style="width: {{ hp_player }}%; background-color: var(--player-color)"></div>
+                            </div>
+                            <p style="text-align: center;">🧍 Your HP: {{ hp_player }} / 100</p>
+                        </div>
+
+                        <div style="flex: 1;">
+                            <div class="hp-bar">
+                                <div class="hp-bar-inner"
+                                    style="width: {{ hp_wizard }}%; background-color: var(--enemy-color)"></div>
+                            </div>
+                            <p style="text-align: center;">🧙 Wizard HP: {{ hp_wizard }} / 100</p>
+                        </div>
                     </div>
-                    <p style="text-align: center;">🧍 Your HP: {{ hp_player }} / 100</p>
+
+                    <!-- XP / Streak / Questions Progress -->
+                    <div style="display: flex; justify-content: center; gap: 40px; margin-top: 10px;">
+                        <p>⭐ XP: {{ profile['xp'] }}</p>
+                        <p>⚡ Streak: {{ session['streak'] }}</p>
+                        {% if question %}
+                        <p>📊 Questions: {{ questions_answered }} / {{ total_questions }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- End-of-battle options -->
+                    {% if session['wizard_hp'] <= 0 or session['player_hp'] <=0 %} <form
+                        action="{{ url_for('restart_battle') }}" method="post" style="margin-bottom: 10px;">
+                        <button class="button" type="submit">🔄 Start New Battle (Same World)</button>
+                        </form>
+                        <form action="{{ url_for('choose_world') }}" method="get">
+                            <button class="button" type="submit">🌍 Choose Another World</button>
+                        </form>
+                        {% endif %}
                 </div>
 
-                <div style="flex: 1;">
-                    <div class="hp-bar">
-                        <div class="hp-bar-inner" style="width: {{ hp_wizard }}%; background-color: var(--enemy-color);"></div>
-                    </div>
-                    <p style="text-align: center;">🧙 Wizard HP: {{ hp_wizard }} / 100</p>
+                <!-- Question Form (only if alive and battle active) -->
+                {% if question and session['wizard_hp'] > 0 and session['player_hp'] > 0 %}
+                <div class="battle-box">
+                    {% if difficulty > 1 %}
+                    <p>⏳ This question was answered incorrectly before. Difficulty has increased.</p>
+                    {% endif %}
+
+                    <p>
+                        <strong>🧠 Question</strong>
+                        {% if difficulty == 1 %} <span>🟢 Easy</span>
+                        {% elif difficulty == 2 %} <span>🟡 Medium</span>
+                        {% elif difficulty == 3 %} <span>🔴 Hard</span>
+                        {% endif %}
+                    </p>
+
+                    <p>{{ question['question'] or question['text'] }}</p>
+
+                    <form method="post">
+                        {% for choice in question['choices'] %}
+                        {% set choice_parts = choice.split('. ', 1) %}
+                        <label class="answer-option">
+                            <input type="radio" name="answer" value="{{ choice[0] }}" required />
+                            <span class="choice-prefix">{{ choice_parts[0] }}.</span>
+                            <span class="choice-text">{{ choice_parts[1] if choice_parts|length > 1 else choice
+                                }}</span>
+                        </label>
+                        {% endfor %}
+                        <input type="hidden" name="qid" value="{{ question['id'] }}" />
+                        <input type="hidden" name="world" value="{{ world }}" />
+                        <button class="button" type="submit">⚔️ Submit Answer</button>
+                    </form>
                 </div>
-            </div>
-
-            <!-- XP / Streak / Questions Progress -->
-            <div style="display: flex; justify-content: center; gap: 40px; margin-top: 10px;">
-                <p>⭐ XP: {{ profile['xp'] }}</p>
-                <p>⚡ Streak: {{ session['streak'] }}</p>
-                {% if question %}
-                <p>📊 Questions: {{ questions_answered }} / {{ total_questions }}</p>
                 {% endif %}
-            </div>
-
-            <!-- End-of-battle options -->
-            {% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %}
-            <form action="{{ url_for('restart_battle') }}" method="post" style="margin-bottom: 10px;">
-                <button class="button" type="submit">🔄 Start New Battle (Same World)</button>
-            </form>
-            <form action="{{ url_for('choose_world') }}" method="get">
-                <button class="button" type="submit">🌍 Choose Another World</button>
-            </form>
-            {% endif %}
-        </div>
-
-        <!-- Question Form (only if alive and battle active) -->
-        {% if question and session['wizard_hp'] > 0 and session['player_hp'] > 0 %}
-        <div class="battle-box">
-            {% if difficulty > 1 %}
-            <p>⏳ This question was answered incorrectly before. Difficulty has increased.</p>
-            {% endif %}
-
-            <p>
-                <strong>🧠 Question</strong>
-                {% if difficulty == 1 %} <span>🟢 Easy</span>
-                {% elif difficulty == 2 %} <span>🟡 Medium</span>
-                {% elif difficulty == 3 %} <span>🔴 Hard</span>
-                {% endif %}
-            </p>
-
-            <p>{{ question['question'] or question['text'] }}</p>
-
-            <form method="post">
-                {% for choice in question['choices'] %}
-                <label>
-                    <input type="radio" name="answer" value="{{ choice[0] }}" required />
-                    {{ choice }}
-                </label>
-                {% endfor %}
-                <input type="hidden" name="qid" value="{{ question['id'] }}" />
-                <input type="hidden" name="world" value="{{ world }}" />
-                <button class="button" type="submit">⚔️ Submit Answer</button>
-            </form>
-        </div>
-        {% endif %}
     </div>
 </body>
+
 </html>
