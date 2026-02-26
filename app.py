@@ -38,6 +38,7 @@ def index():
         session["player_hp"] = 100
         session["wizard_hp"] = 100
         session["streak"] = 0
+        session["fresh_start"] = True
         session.pop("last_result", None)
         session.pop("question", None)
         session.pop("world", None)
@@ -65,6 +66,10 @@ def choose_world():
         session.pop("last_result", None)
         return redirect(url_for("battle"))
 
+    fresh_start = session.get("fresh_start", False)
+    if fresh_start:
+        session["fresh_start"] = False
+
     battle_active = session.get("player_hp", 100) > 0 and session.get("wizard_hp", 100) > 0
     return render_template(
         "choose_world.html",
@@ -72,7 +77,8 @@ def choose_world():
         player_hp=session.get("player_hp", 100),
         wizard_hp=session.get("wizard_hp", 100),
         streak=session.get("streak", 0),
-        battle_active=battle_active
+        battle_active=battle_active,
+        fresh_start=fresh_start
     )
 
 @app.route("/battle", methods=["GET", "POST"])

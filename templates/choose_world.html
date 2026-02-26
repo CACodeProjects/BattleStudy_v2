@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,7 +33,7 @@
             padding: 20px;
             border-radius: 10px;
             margin-top: 80px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
 
@@ -49,9 +50,9 @@
             margin-top: 10px;
         }
 
-            .button:hover {
-                background-color: #b388ff;
-            }
+        .button:hover {
+            background-color: #b388ff;
+        }
 
         select {
             padding: 10px;
@@ -69,20 +70,23 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="battle-box">
             <h1>🌍 Choose Your World</h1>
 
-            {% if player_hp > 0 and wizard_hp > 0 %}
-            <div class="status-box" style="background-color: #3a345c; padding: 10px; margin-bottom: 15px; border-radius: 8px;">
+            {% if battle_active and not fresh_start %}
+            <div class="status-box"
+                style="background-color: #3a345c; padding: 10px; margin-bottom: 15px; border-radius: 8px;">
                 <p>🧙‍♂️ <strong>Battle in Progress!</strong></p>
                 <p>💖 Player HP: {{ player_hp }}</p>
                 <p>🔥 Wizard HP: {{ wizard_hp }}</p>
                 <p>⭐ Streak: {{ streak }}</p>
             </div>
             {% else %}
-            <div class="status-box" style="background-color: #2c2b44; padding: 10px; margin-bottom: 15px; border-radius: 8px;">
+            <div class="status-box"
+                style="background-color: #2c2b44; padding: 10px; margin-bottom: 15px; border-radius: 8px;">
                 <p>🧘 <strong>Ready to Battle!</strong></p>
                 <p>💖 Player HP: 100</p>
                 <p>🔥 Wizard HP: 100</p>
@@ -101,4 +105,5 @@
         </div>
     </div>
 </body>
+
 </html>
