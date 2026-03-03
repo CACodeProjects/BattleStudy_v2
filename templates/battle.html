@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Battle Study - Battle</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
 </head>
+
 <body class="screen">
     {% set hp_player = session.get('final_player_hp', session.get('player_hp', 100)) %}
     {% set hp_wizard = session.get('final_wizard_hp', session.get('wizard_hp', 100)) %}
-    {% set player_class = 'low' if hp_player <= 25 else 'mid' if hp_player <= 55 else '' %}
-    {% set wizard_class = 'low' if hp_wizard <= 25 else 'mid' if hp_wizard <= 55 else '' %}
-    {% set hit_wizard = result and "Correct!" in result %}
-    {% set hit_player = result and "Wrong!" in result %}
-
-    <main class="app-shell">
+    {% set player_class = 'low' if hp_player <= 25 else 'mid' if hp_player <=55 else '' %} {% set wizard_class='low' if
+        hp_wizard <=25 else 'mid' if hp_wizard <=55 else '' %} {% set hit_wizard=result and "Correct!" in result %} {%
+        set hit_player=result and "Wrong!" in result %} <main class="app-shell">
         <header class="top-bar">
             <div>
                 <p class="brand">BattleStudy</p>
@@ -32,7 +31,9 @@
                     </div>
                     <div class="hp-row">
                         <span>HP</span>
-                        <div class="hp-track"><div class="hp-fill {{ player_class }}" style="--hp: {{ hp_player }}%;"></div></div>
+                        <div class="hp-track">
+                            <div class="hp-fill {{ player_class }}" style="--hp: {{ hp_player }}%;"></div>
+                        </div>
                         <span>{{ hp_player }}/100</span>
                     </div>
                 </article>
@@ -44,7 +45,9 @@
                     </div>
                     <div class="hp-row">
                         <span>HP</span>
-                        <div class="hp-track"><div class="hp-fill {{ wizard_class }}" style="--hp: {{ hp_wizard }}%;"></div></div>
+                        <div class="hp-track">
+                            <div class="hp-fill {{ wizard_class }}" style="--hp: {{ hp_wizard }}%;"></div>
+                        </div>
                         <span>{{ hp_wizard }}/100</span>
                     </div>
                 </article>
@@ -88,12 +91,12 @@
             {% set bad = "Wrong!" in result %}
             <div class="result-box {{ 'result-good' if good else 'result-bad' if bad else 'info-box' }}" role="status">
                 {% if good %}<strong>Correct.</strong>{% elif bad %}<strong>Incorrect.</strong>{% endif %}
-                <span style="white-space: pre-line;"> {{ result.replace('Correct!', '').replace('Wrong!', '')|e }}</span>
+                <span style="white-space: pre-line;"> {{ result.replace('Correct!', '').replace('Wrong!', '')|e
+                    }}</span>
             </div>
             {% endif %}
 
-            {% if session['wizard_hp'] <= 0 or session['player_hp'] <= 0 %}
-            <section class="panel">
+            {% if session['wizard_hp'] <= 0 or session['player_hp'] <=0 %} <section class="panel">
                 <div class="action-row">
                     <form action="{{ url_for('restart_battle') }}" method="post">
                         <button type="submit">Start New Battle</button>
@@ -102,47 +105,49 @@
                         <button type="submit" class="button-alt">Choose Another World</button>
                     </form>
                 </div>
-            </section>
-            {% elif world_completed %}
-            <section class="panel">
-                <form action="{{ url_for('choose_world') }}" method="get">
-                    <button type="submit" class="button-alt">Choose Another World</button>
-                </form>
-            </section>
-            {% endif %}
-
-            {% if question and session['wizard_hp'] > 0 and session['player_hp'] > 0 %}
-            <section class="question-panel" aria-label="Question panel">
-                <div class="question-head">
-                    <strong>Question</strong>
-                    {% if difficulty == 1 %}<span class="difficulty easy">Easy</span>{% endif %}
-                    {% if difficulty == 2 %}<span class="difficulty medium">Medium</span>{% endif %}
-                    {% if difficulty == 3 %}<span class="difficulty hard">Hard</span>{% endif %}
-                </div>
-
-                {% if difficulty > 1 %}
-                <div class="info-box">Difficulty raised because this question was missed in a prior attempt.</div>
-                {% endif %}
-
-                <p class="question-text">{{ question['question'] or question['text'] }}</p>
-
-                <form method="post" class="form-panel">
-                    <div class="answers">
-                        {% for choice in question['choices'] %}
-                        {% set choice_parts = choice.split('. ', 1) %}
-                        <label class="answer">
-                            <input type="radio" name="answer" value="{{ choice[0] }}" required />
-                            <span><strong>{{ choice_parts[0] }}.</strong> {{ choice_parts[1] if choice_parts|length > 1 else choice }}</span>
-                        </label>
-                        {% endfor %}
-                    </div>
-                    <input type="hidden" name="qid" value="{{ question['id'] }}" />
-                    <input type="hidden" name="world" value="{{ world }}" />
-                    <button type="submit">Submit Answer</button>
-                </form>
-            </section>
-            {% endif %}
         </section>
-    </main>
+        {% elif world_completed %}
+        <section class="panel">
+            <form action="{{ url_for('choose_world') }}" method="get">
+                <button type="submit" class="button-alt">Choose Another World</button>
+            </form>
+        </section>
+        {% endif %}
+
+        {% if question and session['wizard_hp'] > 0 and session['player_hp'] > 0 %}
+        <section class="question-panel" aria-label="Question panel">
+            <div class="question-head">
+                <strong>Question</strong>
+                {% if difficulty == 1 %}<span class="difficulty easy">Easy</span>{% endif %}
+                {% if difficulty == 2 %}<span class="difficulty medium">Medium</span>{% endif %}
+                {% if difficulty == 3 %}<span class="difficulty hard">Hard</span>{% endif %}
+            </div>
+
+            {% if difficulty > 1 %}
+            <div class="info-box">Difficulty raised because this question was missed in a prior attempt.</div>
+            {% endif %}
+
+            <p class="question-text">{{ question['question'] or question['text'] }}</p>
+
+            <form method="post" class="form-panel">
+                <div class="answers">
+                    {% for choice in question['choices'] %}
+                    {% set choice_parts = choice.split('. ', 1) %}
+                    <label class="answer">
+                        <input type="radio" name="answer" value="{{ choice[0] }}" required />
+                        <span><strong>{{ choice_parts[0] }}.</strong> {{ choice_parts[1] if choice_parts|length > 1 else
+                            choice }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="qid" value="{{ question['id'] }}" />
+                <input type="hidden" name="world" value="{{ world }}" />
+                <button type="submit">Submit Answer</button>
+            </form>
+        </section>
+        {% endif %}
+        </section>
+        </main>
 </body>
+
 </html>
