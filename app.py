@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_migrate import Migrate
 from models import db, User, QuestionProgress
 from dotenv import load_dotenv
 from pathlib import Path
@@ -17,7 +16,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
-migrate = Migrate(app, db)
 
 QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v5.json")
 with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:

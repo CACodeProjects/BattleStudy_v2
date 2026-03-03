@@ -1,4 +1,23 @@
-﻿# VSCode or Visual Studio
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+
+# Local database/runtime files
+instance/
+*.db
+
+# Local user data
+data/users/
+
+# Environment variables
+.env
+
+# Editor/IDE artifacts
 .vs/
 .vsidx/
 *.suo
@@ -6,16 +25,5 @@
 *.userosscache
 *.sln.docstates
 
-# Bytecode and caches
-__pycache__/
-*.pyc
-
-# Local data
-data/users/
-instance/*.db
-
-# Ignore environment variable definitions
-.env
-
-# Ignore tools folder
+# Misc tooling
 tools/
