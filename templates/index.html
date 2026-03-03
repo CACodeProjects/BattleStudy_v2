@@ -1,100 +1,53 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wizard Battle - Enter Name</title>
-    <style>
-        /* Copy the full CSS block from battle.html here */
-        :root {
-            --player-color: #76c7c0;
-            --enemy-color: #e57373;
-            --bg-dark: #1f1c2c;
-            --bg-box: #2e2a47;
-            --accent: #7c4dff;
-        }
-
-        body {
-            font-family: "Segoe UI Emoji", "Segoe UI", sans-serif;
-            background: linear-gradient(to bottom, #1f1c2c, #928dab);
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .battle-box {
-            background-color: var(--bg-box);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 80px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-
-        .button {
-            padding: 12px 20px;
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-            .button:hover {
-                background-color: #b388ff;
-            }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            font-size: 1rem;
-            border-radius: 6px;
-            border: none;
-            width: 100%;
-            max-width: 400px; /* Optional for visual balance */
-        }
-
-        @media screen and (max-width: 600px) {
-            body {
-                padding: 0 10px;
-            }
-        }
-    </style>
+    <title>Battle Study - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
 </head>
-<body>
-    <div class="container">
-        <div class="battle-box">
-            <h1>🧙 Enter Your Wizard Name</h1>
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <div style="background-color: #5c2f2f; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-                {% for message in messages %}
-                <p style="margin: 0;">{{ message }}</p>
-                {% endfor %}
+<body class="screen">
+    <main class="app-shell">
+        <header class="top-bar">
+            <div>
+                <p class="brand">BattleStudy</p>
+                <span class="brand-sub">Cybersecurity Combat Simulator</span>
             </div>
-            {% endif %}
-            {% endwith %}
-            <form method="post">
-                <input type="text" name="username" placeholder="e.g. Gandalf" required />
-                <button class="button" type="submit">🔮 Begin Your Journey</button>
-            </form>
-        </div>
-    </div>
+            <span class="status-chip">Node: Public Gateway</span>
+        </header>
+
+        <section class="stack">
+            <div class="hero-grid">
+                <article class="panel">
+                    <h1 class="title">Initialize <span class="title-accent">Operator Profile</span></h1>
+                    <p class="subtitle">Enter your handle to load your progression, launch your active world, and continue your ranked security battles.</p>
+                    <div class="pill-row">
+                        <span class="pill">World Progression</span>
+                        <span class="pill">Adaptive Questions</span>
+                        <span class="pill">XP Tracking</span>
+                    </div>
+                </article>
+
+                <article class="panel form-panel">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="error-box" role="alert">
+                        {% for message in messages %}
+                        <p style="margin:.12rem 0;">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    <form method="post" class="form-panel">
+                        <label class="label" for="username">Username</label>
+                        <input id="username" type="text" name="username" placeholder="e.g. gandalf_01" required autocomplete="username" />
+                        <p class="terminal-note">Use the same name anytime to continue from your saved state.</p>
+                        <button type="submit">Enter Command Center</button>
+                    </form>
+                </article>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
