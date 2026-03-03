@@ -174,12 +174,14 @@ body.screen {
 }
 
 input[type="text"],
+input[type="password"],
 select,
 button {
     font: inherit;
 }
 
 input[type="text"],
+input[type="password"],
 select {
     width: 100%;
     border: 1px solid rgba(125, 210, 247, 0.45);
@@ -189,7 +191,8 @@ select {
     border-radius: 2px;
 }
 
-input[type="text"]::placeholder {
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
     color: #7994a7;
 }
 

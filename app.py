@@ -6,6 +6,8 @@ import json
 import random
 import socket
 import os
+from sqlalchemy import inspect, text
+from werkzeug.security import check_password_hash, generate_password_hash
 
 load_dotenv()
 
@@ -21,29 +23,64 @@ QUESTIONS_FILE = Path("data/Questions_Scenario_Based_v5.json")
 with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
     all_questions = json.load(f)
 
+def ensure_auth_schema():
+    inspector = inspect(db.engine)
+    if "users" not in inspector.get_table_names():
+        return
+
+    user_columns = {col["name"] for col in inspector.get_columns("users")}
+    if "password_hash" not in user_columns:
+        with db.engine.begin() as conn:
+            conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
+
+
+@app.before_request
+def init_auth_schema_once():
+    if app.config.get("_AUTH_SCHEMA_READY"):
+        return
+
+    ensure_auth_schema()
+    app.config["_AUTH_SCHEMA_READY"] = True
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         username = request.form.get("username", "").strip().lower()
+        password = request.form.get("password", "")
 
         if not username:
             flash("Please enter a valid username.")
             return redirect(url_for("index"))
 
-        session["username"] = username
+        if len(password) < 8:
+            flash("Password must be at least 8 characters.")
+            return redirect(url_for("index"))
+
+        user = User.query.filter_by(username=username).first()
+
+        if user:
+            if not user.password_hash:
+                flash("This account requires a password reset. Use a new username for now.")
+                return redirect(url_for("index"))
+            if not check_password_hash(user.password_hash, password):
+                flash("Invalid username or password.")
+                return redirect(url_for("index"))
+        else:
+            user = User(
+                username=username,
+                email=f"{username}@example.com",
+                password_hash=generate_password_hash(password, method="scrypt")
+            )
+            db.session.add(user)
+            db.session.commit()
+
+        session.clear()
+        session["user_id"] = user.id
+        session["username"] = user.username
         session["player_hp"] = 100
         session["wizard_hp"] = 100
         session["streak"] = 0
         session["fresh_start"] = True
-        session.pop("last_result", None)
-        session.pop("question", None)
-        session.pop("world", None)
-
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            user = User(username=username, email=f"{username}@example.com")
-            db.session.add(user)
-            db.session.commit()
 
         return redirect(url_for("choose_world"))
     return render_template("index.html")
@@ -79,17 +116,25 @@ def choose_world():
 
 @app.route("/battle", methods=["GET", "POST"])
 def battle():
+    user_id = session.get("user_id")
     username = session.get("username")
-    if not username:
-        flash("Please enter your username to start a battle.")
-        return redirect(url_for("index"))
 
-    user = User.query.filter_by(username=username).first()
+    if user_id:
+        user = User.query.get(user_id)
+    elif username:
+        # Backward compatibility for pre-auth sessions
+        user = User.query.filter_by(username=username).first()
+        if user:
+            session["user_id"] = user.id
+    else:
+        user = None
+
     if not user:
         session.clear()
-        flash("Your session expired. Please sign in again.")
+        flash("Please sign in to continue.")
         return redirect(url_for("index"))
 
+    username = user.username
     world = session.get("world", "ALL")
 
     session["player_hp"] = session.get("player_hp", 100)
@@ -277,6 +322,7 @@ def restart_battle():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        ensure_auth_schema()
     host_ip = socket.gethostbyname(socket.gethostname())
     print(f"Local network access: http://{host_ip}:5000")
     print("Access on this machine: http://127.0.0.1:5000")

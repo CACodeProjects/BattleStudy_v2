@@ -42,7 +42,9 @@
                     <form method="post" class="form-panel">
                         <label class="label" for="username">Username</label>
                         <input id="username" type="text" name="username" placeholder="e.g. gandalf_01" required autocomplete="username" />
-                        <p class="terminal-note">Use the same name anytime to continue from your saved state.</p>
+                        <label class="label" for="password">Password</label>
+                        <input id="password" type="password" name="password" placeholder="Minimum 8 characters" required autocomplete="current-password" minlength="8" />
+                        <p class="terminal-note">Existing users must enter the correct password. New usernames create a new account.</p>
                         <button type="submit">Enter Command Center</button>
                     </form>
                 </article>
