@@ -1,5 +1,3 @@
-# 🔙️ Updated app.py — Final Fix: Accurate Question Completion Filtering + Cooldown Handling
-
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_migrate import Migrate
 from models import db, User, QuestionProgress
@@ -225,8 +223,6 @@ def battle():
             username=username,
             world=world,
             profile=user,
-            difficulty=0,
-            mistakes=0,
             question=None,
             error_message=f"No available questions in {world}.",
             result=last_result,
@@ -240,13 +236,13 @@ def battle():
     progress = progresses.get(qid)
 
     difficulty = progress.difficulty_level if progress else 1
-    mistakes = progress.mistakes if progress else 0
     session["question"] = question
 
-    print("Current qid:", qid)
-    print("Questions Answered:", questions_answered)
-    print("Total Questions in world:", len(world_question_ids))
-    print("🧪 DEBUG — Correct Answer:", question.get("correct_answer", "N/A"))
+    print(
+        f"[QUESTION_DEBUG] user={username} world={world} qid={qid} "
+        f"correct={question.get('correct_answer', '')}",
+        flush=True
+    )
 
     return render_template(
         "battle.html",
@@ -255,7 +251,6 @@ def battle():
         question=question,
         profile=user,
         difficulty=difficulty,
-        mistakes=mistakes,
         result=last_result,
         questions_answered=questions_answered,
         total_questions=len(world_question_ids)
