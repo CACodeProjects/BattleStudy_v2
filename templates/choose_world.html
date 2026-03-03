@@ -1,109 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wizard Battle - Choose World</title>
-    <style>
-        :root {
-            --player-color: #76c7c0;
-            --enemy-color: #e57373;
-            --bg-dark: #1f1c2c;
-            --bg-box: #2e2a47;
-            --accent: #7c4dff;
-        }
-
-        body {
-            font-family: "Segoe UI Emoji", "Segoe UI", sans-serif;
-            background: linear-gradient(to bottom, #1f1c2c, #928dab);
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .battle-box {
-            background-color: var(--bg-box);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 80px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-
-        .button {
-            padding: 12px 20px;
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .button:hover {
-            background-color: #b388ff;
-        }
-
-        select {
-            padding: 10px;
-            width: 100%;
-            font-size: 1rem;
-            border-radius: 6px;
-            margin-top: 10px;
-            border: none;
-        }
-
-        @media screen and (max-width: 600px) {
-            body {
-                padding: 0 10px;
-            }
-        }
-    </style>
+    <title>Battle Study - Choose World</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
 </head>
+<body class="screen">
+    <main class="app-shell">
+        <header class="top-bar">
+            <div>
+                <p class="brand">BattleStudy</p>
+                <span class="brand-sub">World Routing Console</span>
+            </div>
+            <span class="status-chip">{{ "Session Live" if battle_active and not fresh_start else "New Session" }}</span>
+        </header>
 
-<body>
-    <div class="container">
-        <div class="battle-box">
-            <h1>🌍 Choose Your World</h1>
+        <section class="stack">
+            <article class="panel">
+                <h1 class="title">Select <span class="title-accent">Operation World</span></h1>
+                <p class="subtitle">Choose a chapter to deploy into. Existing HP and streak state are preserved when resuming an active fight.</p>
+            </article>
+
+            <section class="stats-grid" aria-label="Battle status metrics">
+                <article class="stat">
+                    <p class="k">Player HP</p>
+                    <p class="v">{{ player_hp if battle_active else 100 }}</p>
+                </article>
+                <article class="stat">
+                    <p class="k">Wizard HP</p>
+                    <p class="v">{{ wizard_hp if battle_active else 100 }}</p>
+                </article>
+                <article class="stat">
+                    <p class="k">Streak</p>
+                    <p class="v">{{ streak if battle_active else 0 }}</p>
+                </article>
+                <article class="stat">
+                    <p class="k">Mode</p>
+                    <p class="v">{{ "Continue" if battle_active and not fresh_start else "Fresh" }}</p>
+                </article>
+            </section>
 
             {% if battle_active and not fresh_start %}
-            <div class="status-box"
-                style="background-color: #3a345c; padding: 10px; margin-bottom: 15px; border-radius: 8px;">
-                <p>🧙‍♂️ <strong>Battle in Progress!</strong></p>
-                <p>💖 Player HP: {{ player_hp }}</p>
-                <p>🔥 Wizard HP: {{ wizard_hp }}</p>
-                <p>⭐ Streak: {{ streak }}</p>
-            </div>
+            <div class="info-box" role="status">Active battle detected. Entering a world keeps your current HP and streak values.</div>
             {% else %}
-            <div class="status-box"
-                style="background-color: #2c2b44; padding: 10px; margin-bottom: 15px; border-radius: 8px;">
-                <p>🧘 <strong>Ready to Battle!</strong></p>
-                <p>💖 Player HP: 100</p>
-                <p>🔥 Wizard HP: 100</p>
-                <p>⭐ Streak: 0</p>
-            </div>
+            <div class="info-box" role="status">No active battle found. Starting a world initializes both sides at full HP.</div>
             {% endif %}
 
-            <form method="post">
-                <select name="world" required>
+            <form method="post" class="panel form-panel" aria-label="World selection form">
+                <label class="label" for="world">Chapter / World</label>
+                <select id="world" name="world" class="select-list" size="12" required>
                     {% for chapter in chapters %}
                     <option value="{{ chapter }}">{{ chapter }}</option>
                     {% endfor %}
                 </select>
-                <button class="button" type="submit">🚪 Enter World</button>
+                <p class="terminal-note">Single-select world list. Scroll to explore all available chapters.</p>
+                <button type="submit">Launch World</button>
             </form>
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
-
 </html>

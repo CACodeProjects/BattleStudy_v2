@@ -110,7 +110,7 @@ def battle():
 
         question = session.get("question")
         if not question or str(question["id"]) != qid:
-            flash("Question mismatch — please try again.")
+            flash("Question mismatch - please try again.")
             return redirect(url_for("battle"))
 
         correct_answer = question.get("correct_answer", "")
@@ -156,7 +156,7 @@ def battle():
         else:
             session["player_hp"] -= dmg_to_player
             session["streak"] = 0
-            result = f"❌ Wrong! The wizard hit you for {dmg_to_player} damage.\nCorrect answer: {correct_answer}"
+            result = f"Wrong! The wizard hit you for {dmg_to_player} damage.\nCorrect answer: {correct_answer}"
             progress.cooldown = 1
             progress.completed = False
             progress.mistakes += 1
@@ -172,13 +172,13 @@ def battle():
             session["final_wizard_hp"] = 0
             session["wizard_hp"] = 0
             session["player_hp"] = 0
-            result += "\n🏆 You defeated the wizard! +50 XP"
+            result += "\nYou defeated the wizard! +50 XP"
             user.xp += 50
         elif session["player_hp"] <= 0:
             session["final_player_hp"] = 0
             session["final_wizard_hp"] = session["wizard_hp"]
             session["player_hp"] = 0
-            result += "\n💀 You were defeated by the wizard."
+            result += "\nYou were defeated by the wizard."
 
         db.session.commit()
         session["last_result"] = result
@@ -187,7 +187,7 @@ def battle():
     # GET logic continues here
     last_result = session.pop("last_result", None)
 
-    # ✅ More accurate filtering for usable questions
+    # More accurate filtering for usable questions
     usable_questions = []
     for q in all_questions:
         if world != "ALL" and q.get("chapter") != world:
@@ -197,9 +197,9 @@ def battle():
         progress = progresses.get(qid)
 
         if not progress:
-            usable_questions.append(q)  # never seen → usable
+            usable_questions.append(q)  # never seen -> usable
         elif progress.completed is False and progress.cooldown == 0:
-            usable_questions.append(q)  # not completed + cooldown expired → usable
+            usable_questions.append(q)  # not completed + cooldown expired -> usable
 
     # Calculate progress before possibly rendering "no questions left"
     world_questions = [q for q in all_questions if world == "ALL" or q.get("chapter") == world]
@@ -214,7 +214,7 @@ def battle():
     questions_answered = len(world_question_ids & answered_ids)
 
 
-    # 🔁 FIXED: check AFTER the loop, not inside it
+    # FIXED: check AFTER the loop, not inside it
     if not usable_questions:
         return render_template(
             "battle.html",
@@ -224,6 +224,7 @@ def battle():
             question=None,
             error_message=f"No available questions in {world}.",
             result=last_result,
+            world_completed=True,
             questions_answered=questions_answered,
             total_questions=total_questions
         )
@@ -250,10 +251,20 @@ def battle():
         profile=user,
         difficulty=difficulty,
         result=last_result,
+        world_completed=False,
         questions_answered=questions_answered,
         total_questions=len(world_question_ids)
     )
 
+
+@app.route("/sample-battle-ui")
+def sample_battle_ui():
+    return render_template("sample_battle_ui.html", username=session.get("username", "Player"))
+
+
+@app.route("/sample-world-ui")
+def sample_world_ui():
+    return render_template("sample_world_ui.html")
 
 @app.route("/restart", methods=["POST"])
 def restart_battle():
