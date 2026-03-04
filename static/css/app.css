@@ -272,6 +272,14 @@ button:active {
     gap: 0.55rem;
 }
 
+.stats-grid--battle {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stats-grid--battle .stat {
+    text-align: center;
+}
+
 .stat {
     border: 1px solid var(--line-soft);
     background: rgba(12, 28, 42, 0.72);
@@ -504,3 +512,4 @@ button:active {
         grid-template-columns: 1fr;
     }
 }
+
